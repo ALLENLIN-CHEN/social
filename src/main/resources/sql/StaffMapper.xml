@@ -47,10 +47,24 @@
 		    
 		    
 		    
+    	]]>
+    </select>
+    
+    
+       <select id ="selectRelationshipPlus" resultType="org.scut.mychart.model.StaffModel" useCache="true">
+    	<![CDATA[
+		     
 		    
+		    select current_work_place as name,original_work_place as name2,count(*) as num
+		    from ryld 
+		    where turn_out_date  between #{0} and #{1}
+		    group by name,name2
+		    order by name,name2
+ 
 		    
     	]]>
     </select>
+    
     <select id ="selectOutAll" resultType="org.scut.mychart.model.StaffModel" useCache="true">
     	<![CDATA[
 		    select year(turn_out_date) as year,original_work_place as name,count(*) as num
