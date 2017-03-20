@@ -226,11 +226,125 @@ public class StaffServiceImpl implements StaffService{
 		data.put("listOut", listOut);
 		data.put("reName",relaName);
 		data.put("reNum", relaNum);
-		data.put("all", listRe);
+		
 		
 		data.put("reName2",relaName2);
 		data.put("reNum2", relaNum2);
 		data.put("type","relation");
+		data.put("sTime", sTime);
+		data.put("eTime", eTime);
+		return data;
+		
+	}
+	
+	
+	@Override
+	public Map<String, Object> getCityTreeMapData(String sTime ,String eTime){
+		Map<String,Object> data = new HashMap<String,Object>();
+		String stime=sTime+"-01-01 00:00:00";
+		String etime=eTime+"-12-31 00:00:00";
+		
+		List<StaffModel> listIn = this.staff.selectIn(stime,etime);
+		List<StaffModel> listOut = this.staff.selectOut(stime,etime);
+		List<StaffModel> listRe=this.staff.selectRelationship(stime, etime); 
+		List<StaffModel> listReIn=this.staff.selectRelationshipPlus(stime, etime);
+		
+		
+		
+	
+		
+		for(int i=0;i<listOut.size();i++){
+			double cur=0.0;
+			String string=listOut.get(i).getName();
+			boolean ok=true;
+			for(int j=0;j<listIn.size();j++){
+				if(listIn.get(j).getName().equals(string)){
+					cur=(double)listIn.get(i).getNum()/listOut.get(j).getNum();
+					
+					listOut.get(i).setOtherNum(listIn.get(j).getNum());
+					listOut.get(i).setPercent(cur);
+					ok=false;
+					break;
+				}			
+			}
+		}
+		
+		
+		Map<String, Object> relaName=new HashMap<String, Object>();
+		Map<String, Object> relaNum=new HashMap<String, Object>();
+		
+		
+		List<String> name=new ArrayList<String>();	
+		List<Integer> num=new ArrayList<Integer>();
+		
+		String bef=listRe.get(0).getName();
+		String cur;
+		
+		for(int i=0;i<listRe.size();i++){
+			cur=listRe.get(i).getName();
+			if(cur.equals(bef)){
+				name.add(listRe.get(i).getName2());
+				num.add(listRe.get(i).getNum());
+			}
+			else{
+				relaName.put(bef, name);
+				relaNum.put(bef, num);
+				
+				bef=cur;
+				name = new ArrayList<String>();
+				num=new ArrayList<Integer>();
+				
+				name.add(listRe.get(i).getName2());
+				num.add(listRe.get(i).getNum());
+					
+			}
+
+		}
+		relaName.put(bef, name);
+		relaNum.put(bef, num);
+		
+		
+		Map<String, Object> relaName2=new HashMap<String, Object>();
+		Map<String, Object> relaNum2=new HashMap<String, Object>();
+		List<String> name2=new ArrayList<String>();	
+		List<Integer> num2=new ArrayList<Integer>();
+		
+		String bef2=listReIn.get(0).getName();
+		String cur2;
+		
+		for(int i=0;i<listReIn.size();i++){
+			cur2=listReIn.get(i).getName();
+			if(cur2.equals(bef2)){
+				name2.add(listReIn.get(i).getName2());
+				num2.add(listReIn.get(i).getNum());
+			}
+			else{
+				relaName2.put(bef2, name2);
+				relaNum2.put(bef2, num2);
+				
+				bef2=cur2;
+				name2=new ArrayList<String>();	
+				num2=new ArrayList<Integer>();
+				
+				name2.add(listReIn.get(i).getName2());
+				num2.add(listReIn.get(i).getNum());
+					
+			}
+
+		}
+		relaName2.put(bef2, name2);
+		relaNum2.put(bef2, num2);
+		
+	
+		data.put("listIn", listIn);
+		data.put("listOut", listOut);
+		data.put("reName",relaName);
+		data.put("reNum", relaNum);
+		
+		
+		data.put("reName2",relaName2);
+		data.put("reNum2", relaNum2);
+		data.put("type","treeMap");
 		data.put("sTime", sTime);
 		data.put("eTime", eTime);
 		return data;

@@ -26,7 +26,13 @@ public interface StaffService {
 	 */
 	public Map<String, Object> getCityAllData(String sTime ,String eTime);
 	
-	
+	/**
+	 * @param sTime
+	 * @param eTime
+	 * 矩形树图数据
+	 * @return
+	 */
+	public Map<String, Object> getCityTreeMapData(String sTime ,String eTime);
 	/**
 	 * @return
 	 * 实现所有数据的对比
