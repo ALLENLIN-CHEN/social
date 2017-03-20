@@ -2,6 +2,7 @@ var myChart;
 var timer =null;
 var isInit = true;
 var option;
+var linkOption;
 
 
 $(function(){
@@ -138,6 +139,7 @@ function formatOptionConfig(data) {
 				break;
 			case 'relation':
 				setRelation(data);
+				myChart.on('click', handleClick);
 				break;
 			case 'Map':
 				//setMap(data);
@@ -170,6 +172,26 @@ function formatOptionConfig(data) {
 		}
 	}
 }
+
+function handleClick(param) {
+	console.log(param);
+	var name,allLinks;
+	if(param.componentType == "series" && param.seriesType == "graph" && param.seriesName == "流入流出情况") {
+		if(linkOption) {
+			name = param.name;
+			allLinks = linkOption.extend.allLinks;
+			linkOption.series[0].links = allLinks.filter(function(link) {
+				if(link.source.indexOf(name) >= 0 || link.target.indexOf(name) >= 0) {
+					return link; 
+				}
+			});
+			
+			myChart.setOption(linkOption);
+		}
+	}
+}
+
+
 function test(obj){
 	var geoCoordMap = {
 		    '上海': [121.4648,31.2891],
@@ -783,6 +805,21 @@ function setMap(obj){
 		};
 	
 }
+
+function isCover(arr, r, x, y) {
+	var tempX, tempY;
+	for(var i = 0; i < arr.length; i++) {
+		tempX = arr[i]['x'];
+		tempY = arr[i]['y'];
+		
+		if(Math.sqrt(Math.pow((x-tempX),2) + Math.pow((y-tempY),2)) < r) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 function setRelation(obj){
 	
 	var listIn=obj.listIn;
@@ -814,18 +851,23 @@ function setRelation(obj){
 	var tmp_nodes=[];
 	var categories=[];
 	var pos=[100,200,300,400,500,600,700,800,900,1000];
+	var x, y;
 	for(var i in data){
 		
 		tmp_nodes.push(data[i].cityIn);
-		var x=parseInt(Math.random()*500);
-		var y=parseInt(Math.random()*400);
+		x=parseInt(Math.random()*500);
+		y=parseInt(Math.random()*400);
+		while(!isCover(nodes, 80, x, y)) {
+			x=parseInt(Math.random()*500);
+			y=parseInt(Math.random()*400);
+		}
 		categories[i]=data[i].cityIn;
 		nodes.push(
 				{
 					'name':data[i].cityIn,
 					'x':x,
 					'y':y,
-					'value':'流出:'+data[i].dataOut+'人     流入:'+data[i].dataIn+'人    流入流出比率:'+data[i].per,
+					'value':'流出:'+data[i].dataOut+'人     流入:'+data[i].dataIn+'人    流入流出比率:'+(data[i].per.toFixed(2))+'%',
 					
 					'label': {
 	                    'normal': {
@@ -880,7 +922,11 @@ function setRelation(obj){
 			})
 		}
 	}
-	var option = {
+	console.log(links);
+	linkOption = {
+			extend: {
+				allLinks: links
+			},
 		    title: {
 		        text: '调用关系构建'
 		    },
@@ -898,10 +944,11 @@ function setRelation(obj){
 		   
 	            name:'流入流出情况',	    
 		        type: 'graph',
-		        legendHoverLink: true,
+		        legendHoverLink: false,
+		        hoverAnimation: false,
 		        layout: 'none',
-		        focusNodeAdjacency: true,
-		        symbolSize: 50,
+		        focusNodeAdjacency: false,
+		        symbolSize: 80,
 		        roam: true,
 		        label: {
 		            normal: {
@@ -909,7 +956,7 @@ function setRelation(obj){
 		            }
 		        },
 		        edgeSymbol: ['circle', 'arrow'],
-		        edgeSymbolSize: [4, 10],
+		        edgeSymbolSize: [4, 16],
 		        edgeLabel: {
 		            normal: {
 		                textStyle: {
@@ -925,7 +972,7 @@ function setRelation(obj){
 		        },
 		        categories: categories,
 		        data: nodes,
-		        links: links,
+		        links: [],
 		        lineStyle: {
 		            normal: {
 		                color: '#1af',
@@ -936,7 +983,7 @@ function setRelation(obj){
 		        }
 		    }]
 		};
-	myChart.setOption(option);
+	myChart.setOption(linkOption);
 	
 
 	
