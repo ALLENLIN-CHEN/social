@@ -49,5 +49,6 @@ public interface StaffMapper {
 	 * @return
 	 */
 	public List<StaffModel> selectRelationship(String stime,String etime);
+	public List<StaffModel> selectRelationshipPlus(String stime,String etime);
 
 }

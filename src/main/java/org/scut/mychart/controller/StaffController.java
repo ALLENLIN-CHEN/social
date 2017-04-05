@@ -61,6 +61,14 @@ public class StaffController {
 				return map;
     }
 	
+	@RequestMapping("/treeMap")
+    @ResponseBody
+    public Map<String, Object> getCityTreeMapData(String sTime ,String eTime){
+		
+		Map<String, Object> map =staffservice.getCityTreeMapData(sTime, eTime);   
+				return map;
+    }
+	
 	/**
 	 * 获取所有数据
 	 * @return
@@ -71,6 +79,8 @@ public class StaffController {
 		Map<String, Object> map =  staffservice.getAllData();
         return map;
     }
+	
+	
 	
 	
 }
