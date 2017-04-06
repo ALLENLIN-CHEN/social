@@ -1165,12 +1165,7 @@ function setRingChart(obj) {
 			title: {text: t+"年流入人次情况统计",
 				   x: 'center'
 			},
-			
-	        
-		    tooltip: {
-		        trigger: 'item',
-		        formatter: "{a} <br/>{b}: {c}人 ({d}%)"
-		    },
+
 
 		    // legend: {
 		    //     orient: 'horizontal',
@@ -1192,7 +1187,10 @@ function setRingChart(obj) {
 		            center:['25%','50%'],
 		            radius: [0, '40%'],
 		            x:'left',
-
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b}: {c}人 ({d}%)"
+					},
 		            label: {
 		                normal: {
 		                    position: 'inner'
