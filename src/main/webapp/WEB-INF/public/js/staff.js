@@ -4,9 +4,21 @@ var isInit = true;
 var option;
 var linkOption;
 
+//用于保存查询地址
+var areas = ['广东省-阳江市','广东省-珠海市','广东省-广州市','广东省-深圳市','上海市','北京市','安徽省-合肥市','江苏省-南京市','浙江省-杭州市','湖北省-孝感市','湖北省-武汉市'];
+
+function setArea() {
+	var options = [];
+	for(var i = 0; i < areas.length; i++) {
+		options.push('<option value="'+areas[i]+'">'+areas[i]+'</option>');
+	}
+	
+	$('.area').html(options.join(''));
+}
 
 $(function(){
 	hideLoading();
+	setArea();
 	myChart = echarts.init(document.getElementById('chartMain'));
 	
 	$(".tablesorter").tablesorter();
@@ -66,7 +78,11 @@ $(function(){
 			});
 		}else {
 			hideLoading();
-			$('.time_wrap').show();
+			if($(this).hasClass('type-area')) {
+				$('.area-wrap').show();
+			} else {
+				$('.time_wrap').show();
+			}
 		}
 	});
 	
@@ -108,6 +124,10 @@ $(function(){
 				
 			}
 		});
+	});
+	
+	$(document).on('click', '.area-wrap .area-search', function() {
+		
 	});
 		
 
@@ -735,7 +755,7 @@ function setMap(obj) {
 				},
 				symbolSize: function (val) {  //涟漪点大小
 					if(val[2]>100) return 15;
-					return 5 +　val[2] / 20;
+					return 5 + val[2] / 20;
 				},
 
 				data: fromCityData.map(function (dataItem) { // 例如: dataItem是BJData的某项

@@ -23,7 +23,7 @@
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 
-	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<!-- 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script> -->
 	<script type="text/javascript" src="js/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="js/hideshow.js" type="text/javascript"></script>
     <script src="js/jquery.tablesorter.min.js" type="text/javascript"></script>
@@ -33,15 +33,15 @@
 <!--     <script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script> -->
 <!--     <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script> -->
 <!--     <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/exporting.js"></script> -->
-    <script type="text/javascript" src="js/analysis0.js"></script>
-    <script type="text/javascript" src="js/analysis1.js"></script>
-    <script type="text/javascript" src="js/analysis2.js"></script>
-    <script type="text/javascript" src="js/analysis3.js"></script>
-    <script type="text/javascript" src="js/analysis4.js"></script>
-    <script type="text/javascript" src="js/analysis5.js"></script>
-    <script type="text/javascript" src="js/analysis6.js"></script>
-    <script type="text/javascript" src="js/analysis7.js"></script>
-    <script type="text/javascript" src="js/analysis8.js"></script>
+<!--     <script type="text/javascript" src="js/analysis0.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis1.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis2.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis3.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis4.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis5.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis6.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis7.js"></script> -->
+<!--     <script type="text/javascript" src="js/analysis8.js"></script> -->
 </head>
 <body>
 	<div class="navbar navbar-fixed-top navbar-inverse" >
@@ -81,7 +81,14 @@
 									<li><a href="/company/industrydisplay.html" target="_blank">各行业社保参保基数综合分析</a></li>
 	                	</ul>
 	                </li>
-	                <li><a href="/social/staff.html">社会关系转移分析</a></li>
+	                
+	                <li class="dropdown">
+	                	<a id="dLabel" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">社会关系转移分析<span class="caret"></span></a>
+	                	<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+		                			<li><a href="/social/staff.html">社会关系转移分析</a></li>
+									<li><a href="/social/map3d.html">柱状统计地图分析</a></li>
+	                	</ul>
+	                </li>
 					<li><a href="/list/allList.html">社保数据列表展示</a></li>
 					<li><a href="/list/recommend.html" target="_blank">就业推荐</a></li>
 
@@ -97,17 +104,21 @@
 					<label>社会关系转移分析</label>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
-<!-- 					<div class="sub-item-wrap"> -->
-<!-- 						<i class="icon"></i> -->
-<!-- 						<div class="type" data-url="staff/staffIn" data-no-init="1">不同城市流入人次分析</div> -->
-<!-- 					</div> -->
-<!-- 					<div class="sub-item-wrap"> -->
-<!-- 						<i class="icon"></i> -->
-<!-- 						<div class="type" data-url="staff/staffOut" data-no-init="1">不同城市流出人次分析</div> -->
-<!-- 					</div> -->
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div class="type" data-url="staff/staffIn" data-no-init="1">不同城市流入人次分析</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div class="type" data-url="staff/staffOut" data-no-init="1">不同城市流出人次分析</div>
+					</div>
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
 						<div class="type" data-url="staff/staffCityAll" data-no-init="1">同一城市流入流出人次分析</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div class="type type-area" data-url="" data-no-init="1">同一城市不同年份对比</div>
 					</div>
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
@@ -121,14 +132,12 @@
 			</div>
 			
 			<div class="right-content">
-			    <div class="area-wrap" style="display:none;">
-					<button type="button" class="btn btn-primary active">孝南区</button>
-					<button type="button" class="btn btn-primary">孝昌县</button>
-					<button type="button" class="btn btn-primary">应城市</button>
-					<button type="button" class="btn btn-primary">云梦县</button>
-					<button type="button" class="btn btn-primary">汉川市</button>
-					<button type="button" class="btn btn-primary">大悟县</button>
-					<button type="button" class="btn btn-primary">安陆市</button>
+			    <div class="area-wrap clearfix" style="display:none;">
+			    	<label class="control-label col-sm-2">地区选择</label>
+			    	<div class="col-sm-2">
+						<select class="form-control area"></select>
+			    	</div>
+			    	<button type="button" class="btn btn-primary col-sm-1 area-search">搜索</button>
 				</div>
 				<div class="time_wrap" style="display:none;">
 					<div class="form-group clearfix">
@@ -157,14 +166,14 @@
 						<button type="button" class="btn btn-primary col-sm-1 search">搜索</button>
 					</div>
 				</div>
-				<div class="multi">
-					<div id="chart1" class="multi-chart"></div>
-					<div id="chart2" class="multi-chart"></div>
-					<div id="chart3" class="multi-chart"></div>
-					<div id="chart4" class="multi-chart"></div>
-					<div id="chart5" class="multi-chart"></div>
-					<div id="chart6" class="multi-chart"></div>
-				</div>
+<!-- 				<div class="multi"> -->
+<!-- 					<div id="chart1" class="multi-chart"></div> -->
+<!-- 					<div id="chart2" class="multi-chart"></div> -->
+<!-- 					<div id="chart3" class="multi-chart"></div> -->
+<!-- 					<div id="chart4" class="multi-chart"></div> -->
+<!-- 					<div id="chart5" class="multi-chart"></div> -->
+<!-- 					<div id="chart6" class="multi-chart"></div> -->
+<!-- 				</div> -->
 				
 				<div class="single">
 					<div id="chartMain"></div>
@@ -181,6 +190,7 @@
 
 		</div>
 	
+	<script type="text/javascript" src = "js/geoCP.js"></script>
 	<script src="js/echarts3/echarts.js"></script>
 	<script src="js/echarts3/map/JS/china.js"></script>
 	<!-- 引入 ECharts-X 主文件 -->
