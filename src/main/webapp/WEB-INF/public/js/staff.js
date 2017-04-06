@@ -4,6 +4,12 @@ var isInit = true;
 var option;
 var linkOption;
 
+//用于保存查询地址
+var areas = ['广东省-阳江市','广东省-珠海市','广东省-广州市','广东省-深圳市','上海市','北京市','安徽省-合肥市','江苏省-南京市','浙江省-杭州市','湖北省-孝感市','湖北省-武汉市'];
+
+function setArea() {
+	
+}
 
 $(function(){
 	hideLoading();
