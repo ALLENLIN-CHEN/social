@@ -186,7 +186,7 @@
 		$spinner.show();
 		$.ajax({
         	type: 'POST',
-        	url: 'http://127.0.0.1:9996/social/staff/treeMap',
+        	url: 'social/staff/treeMap',
         	dataType: 'json',
         	async: true,
         	data: {sTime:$('.startTime').val(), eTime:$('.endTime').val()},
