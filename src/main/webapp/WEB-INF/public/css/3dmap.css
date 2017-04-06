@@ -12,9 +12,25 @@
 	height: 500px;
 	margin-left: -4%;
     min-width: 196px;
+    line-height: 26px;
 	/*border-radius: 6px;
 				box-shadow: 0 1px 4px rgba(0,0,0,.065);
 				border: 2px solid #E5E5E5;*/
+}
+
+.left-content .desc {
+	font-size: 16px;
+	line-height: 26px;
+	display: inline-block;
+}
+
+.left-content .list-in-out {
+	list-style: none;
+	padding: 0;
+}
+
+#stime, #etime, #area, .left-content .child {
+	color: rgb(228, 0, 0);
 }
 
 .left-content .item {
@@ -117,6 +133,52 @@
 
 .right-content .time_wrap .endTime {
 	width: 65%;
+}
+
+.right-content .tag .in {
+	display: inline-block;
+	width: 20px;
+	height: 10px;
+	margin-right: 10px;
+	background-color: rgb(206, 139, 124);
+}
+
+.right-content .tag .out {
+	display: inline-block;
+	width: 20px;
+	height: 10px;
+	margin-right: 10px;
+	background-color: rgb(208, 49, 16);
+}
+
+.right-content .area-label {
+	margin-top: 50px;
+	text-align: center;
+}
+
+.right-content .area-label .area {
+	background-color: rgb(51, 122, 183);
+	color: #fff;
+    display: inline-block;
+    width: 60px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+.right-content .area-label .has-child:after {
+	position: absolute;
+	top: 2px;
+	left: 54px;
+	z-index: 10;
+	content: "";
+	width: 0;
+	height: 0;
+	border-width: 8px 0 8px 8px;
+	border-color: transparent transparent transparent white;
+	border-style: solid;
 }
 
 .right-content .single {

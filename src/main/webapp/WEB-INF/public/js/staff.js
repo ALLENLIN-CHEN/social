@@ -406,6 +406,7 @@ function setTreeMap(obj){
 	            name: '统计',
 	            type: 'treemap',
 	            visibleMin: 300,
+	            roam: false,
 	            data: data,
 	            leafDepth: 1,
 	            levels: [
@@ -889,12 +890,12 @@ function setRelation(obj){
 		    	trigger: 'item',
 		        formatter: "{a} <br/>{b}: {c}"
 		    },
-		    legend: [{
-		        orient: 'vertical',
-		        x: 'left',
-		        data:categories
-		       
-		    }],
+//		    legend: [{
+//		        orient: 'vertical',
+//		        x: 'left',
+//		        data:categories
+//		       
+//		    }],
 		    series: [{
 		   
 	            name:'流入流出情况',	    
@@ -904,7 +905,7 @@ function setRelation(obj){
 		        layout: 'none',
 		        focusNodeAdjacency: false,
 		        symbolSize: 80,
-		        roam: true,
+		        roam: false,
 		        label: {
 		            normal: {
 		                show: true
