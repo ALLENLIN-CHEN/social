@@ -143,7 +143,7 @@ function formatOptionConfig(data) {
 				break;
 			case 'Map':
 				//setMap(data);
-			    setMap(data);
+//			    setMap(data);
 				break;
 			case 'treeMap':	
 				setTreeMap(data);
@@ -175,15 +175,61 @@ function formatOptionConfig(data) {
 function handleClick(param) {
 	console.log(param);
 	var name,allLinks;
-	if(param.componentType == "series" && param.seriesType == "graph" && param.seriesName == "流入流出情况") {
+	var numIn;
+	var name2;
+	if(param.componentType == "series" && param.seriesType == "graph" && param.seriesName == "流入流出情况"&&param.color=='#cfd8dc') {
 		if(linkOption) {
 			name = param.name;
 			allLinks = linkOption.extend.allLinks;
 			linkOption.series[0].links = allLinks.filter(function(link) {
-				if(link.source.indexOf(name) >= 0 || link.target.indexOf(name) >= 0) {
+				if(link.source.indexOf(name) >= 0 ) {
+					link.lineStyle={
+							normal:{
+								color:'#009688',
+				                opacity: 0.9,
+				                width: 2,
+				                curveness: 0.2
+							}
+					}
+					return link; 
+				}
+				if( link.target.indexOf(name) >= 0){
+					link.lineStyle={
+							normal:{
+								color:'#ff5722',
+				                opacity: 0.9,
+				                width: 2,
+				                curveness: 0.2
+							}
+					}
 					return link; 
 				}
 			});
+			
+			links=linkOption.series[0].links;
+			console.log(links)
+			var nameOut;
+			var numOut=0;
+			
+			var nameIn;
+			var numIn=0;
+			for ( var i=0;i<links.length;i++){
+				if(links[i].source==name&&links[i].value>=numOut){
+					numOut=links[i].value;
+					nameOut=links[i].target
+				}
+				if(links[i].target==name&&links[i].value>=numIn){
+					numIn=links[i].value;
+					nameIn=links[i].source;
+				}
+					
+			}
+				
+			linkOption.title.subtext=param.name+'\n\n最多流出城市: '+nameOut+"\n人数: "+numOut+'人\n\n最多流入城市: '+nameIn+"\n人数: "+numIn+"人";
+			linkOption.title.subtextStyle={
+					color:'blue',
+					fontSize:15
+			}
 			
 			myChart.setOption(linkOption);
 		}
@@ -823,7 +869,7 @@ function setRelation(obj){
 					'name':data[i].cityIn,
 					'x':x,
 					'y':y,
-					'value':'流出:'+data[i].dataOut+'人     流入:'+data[i].dataIn+'人    流入流出比率:'+(data[i].per.toFixed(2))+'%',
+					'value':'流出:'+data[i].dataOut+'人     流入:'+data[i].dataIn+'人    流入流出比率:'+(data[i].per.toFixed(2)*100)+'%',
 					
 					'label': {
 	                    'normal': {
@@ -869,6 +915,9 @@ function setRelation(obj){
 	var links=[];
 	for(var i=0;i<data.length;i++){
 		var rela=data[i].rela;
+		if(rela[0]==='无'){
+			break;
+		}
 		var relaData=data[i].relaData;
 		for(var j in rela){
 			links.push({
@@ -884,7 +933,8 @@ function setRelation(obj){
 				allLinks: links
 			},
 		    title: {
-		        text: '调用关系构建'
+		        text: '流入流出关系图',
+		        subtext: "",
 		    },
 		    tooltip: {
 		    	trigger: 'item',
@@ -922,21 +972,22 @@ function setRelation(obj){
 		        },
 		        itemStyle: {
 		            normal: {
-		                color: '#ccc',
-		                borderColor: '#1af'
+		                color: '#cfd8dc',
+		                borderColor: '#3b50ce',
+		                
 		            }
 		        },
 		        categories: categories,
 		        data: nodes,
 		        links: [],
-		        lineStyle: {
-		            normal: {
-		                color: '#1af',
-		                opacity: 0.9,
-		                width: 2,
-		                curveness: 0.2
-		            }
-		        }
+//		        lineStyle: {
+//		            normal: {
+//		            	color:'green',
+//		                opacity: 0.9,
+//		                width: 2,
+//		                curveness: 0.2
+//		            }
+//		        }
 		    }]
 		};
 	myChart.setOption(linkOption);
@@ -947,15 +998,25 @@ function setRelation(obj){
 function setRingChart(obj) {
 	
 	var num = obj.num;   
-	
+	var proData=obj.province;
 	var stime=obj.sTime;
 	var etime=obj.eTime;
 	var t;
 	var citys=[];
 	var cityNames=[];
 	
-	var provinceNames=["广东省","湖北省"];
-	var provinces=[];
+	var province=[];
+	province.push({
+		value:proData[0].otherNum,
+		name:proData[0].name,
+		selected:true,
+	})
+	for(var i =1;i<proData.length;i++){
+		province.push({
+			value:proData[i].otherNum,
+			name:proData[i].name
+		})
+	}
 	
 	if(stime===etime){
 		t=stime;
@@ -975,13 +1036,14 @@ function setRingChart(obj) {
 		citys.push(cur);
 	}
 	
-	var names=[];
-	names=provinceNames.concat(cityNames);
 	
 	option = {
-			title: {text: t+"年流入人次情况统计",x: 'center'},
+			title: {text: t+"年流入人次情况统计",
+				    
+				   x: 'center'
+			},
 			
-	
+	        
 		    tooltip: {
 		        trigger: 'item',
 		        formatter: "{a} <br/>{b}: {c}人 ({d}%)"
@@ -1011,11 +1073,7 @@ function setRingChart(obj) {
 		                    show: false
 		                }
 		            },
-		            data:[
-		                {value:335, name:'广东省', selected:true},
-		                {value:679, name:'湖北省'}
-		               
-		            ]
+		            data:province
 		        },
 		        {
 		            name:'流入人次情况',

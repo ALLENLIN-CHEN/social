@@ -1,5 +1,7 @@
 package org.scut.mychart.model;
 
+import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
+
 /**
  * @author spiden
  *
@@ -12,6 +14,7 @@ public class StaffModel {
 	private String name2;
 	private Double percent;
 	private Integer otherNum;
+	boolean isExist = true;
 	
 	public String getName(){
 		return name;
@@ -33,7 +36,13 @@ public class StaffModel {
 	public Double getPercent(){
 		return percent;
 	}
+	public boolean getIsExist(){
+		return isExist;
+	}
 	
+	public void setNum(Integer n){
+		this.num=n;
+	}
 	public void setOtherNum(Integer n){
 		this.otherNum=n;
 	}
@@ -43,6 +52,11 @@ public class StaffModel {
 	}
 	public void setPercent(Double percent){
 		this.percent=percent;
+	}
+	
+	public void setIsExist(boolean ok){
+		isExist=ok;
+		
 	}
 
 
