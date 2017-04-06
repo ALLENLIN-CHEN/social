@@ -203,20 +203,20 @@
         				inData.push({
         					geoCoord: geoCP['黄浦区'],
         					value: listIn[i].num,
-        					itemStyle: {normal:{color:'rgb(206, 139, 124)'}}
+        					itemStyle: {normal:{color:'#009688'}}
         				});
         			} else if(listIn[i].name === '北京市') {
         				inData.push({
         					geoCoord: geoCP['朝阳区'],
         					value: listIn[i].num,
-        					itemStyle: {normal:{color:'rgb(206, 139, 124)'}}
+        					itemStyle: {normal:{color:'#009688'}}
         				});
         			} else {
         				index = listIn[i].name.split('-')[1];
         				inData.push({
         					geoCoord: geoCP[index],
         					value: listIn[i].num,
-        					itemStyle: {normal:{color:'rgb(206, 139, 124)'}}
+        					itemStyle: {normal:{color:'#009688'}}
         				});
         			}
         		}
@@ -254,20 +254,20 @@
         				outData.push({
         					geoCoord: [geoCP['黄浦区'][0]+0.3, geoCP['黄浦区'][1]],
         					value: listOut[i].num,
-        					itemStyle: {normal:{color:'rgb(208, 49, 16)'}}
+        					itemStyle: {normal:{color:'#e51c23'}}
         				});
         			} else if(listOut[i].name === '北京市') {
         				outData.push({
         					geoCoord: [geoCP['朝阳区'][0]+0.3, geoCP['朝阳区'][1]],
         					value: listOut[i].num,
-        					itemStyle: {normal:{color:'rgb(208, 49, 16)'}}
+        					itemStyle: {normal:{color:'#e51c23'}}
         				});
         			} else {
         				index = listOut[i].name.split('-')[1];
         				outData.push({
         					geoCoord: [geoCP[index][0]+0.3, geoCP[index][1]],
         					value: listOut[i].num,
-        					itemStyle: {normal:{color:'rgb(208, 49, 16)'}}
+        					itemStyle: {normal:{color:'#e51c23'}}
         				});
         			}
         		}
@@ -302,7 +302,7 @@
     	                        normal: {
     	                        	label:{show: false},
     	                            areaStyle: {
-    	                                color: 'rgba(241,240,235,.8)'
+    	                                color: '#91a7ff'
     	                            },
     	                            borderColor: 'rgb(255, 211, 108)'
     	                        },

@@ -140,7 +140,7 @@
 	width: 20px;
 	height: 10px;
 	margin-right: 10px;
-	background-color: rgb(206, 139, 124);
+	background-color: #009688;
 }
 
 .right-content .tag .out {
@@ -148,7 +148,7 @@
 	width: 20px;
 	height: 10px;
 	margin-right: 10px;
-	background-color: rgb(208, 49, 16);
+	background-color: #e51c23;
 }
 
 .right-content .area-label {
