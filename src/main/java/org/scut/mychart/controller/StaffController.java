@@ -41,7 +41,11 @@ public class StaffController {
     @ResponseBody
     public Map<String, Object> getStaffOut(String sTime, String eTime){
 		Map<String, Object> map =  staffservice.getOutData(sTime, eTime);
-        return map;
+		for(Map.Entry entry: map.entrySet()){
+			System.out.println(entry.getKey()+"   ??=??  "+entry.getValue());
+		}
+
+		return map;
     }
 	
 	/**

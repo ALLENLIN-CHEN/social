@@ -118,7 +118,22 @@ public class StaffServiceImpl implements StaffService{
 		Map<String,Object> data = new HashMap<String,Object>();
 		String stime=sTime+"-01-01 00:00:00";
 		String etime=eTime+"-12-31 00:00:00";
-		
+
+		//stime = "2013-01-01 00:00:00"   etime = "2014-12-31 00:00:00"
+		/*
+		 select current_work_place as name,count(*) as num
+		    from ryld
+		    where turn_out_date between "2010-01-01 00:00:00" and "2016-12-31 00:00:00"
+		    group by name
+		    order by name
+
+		    select original_work_place as name,count(*) as num
+		    from ryld
+		    where turn_out_date between "2010-01-01 00:00:00" and "2016-12-31 00:00:00"
+		    group by name
+		    order by name
+		 */
+
 		List<StaffModel> list = this.staff.selectOut(stime,etime);
 		List<StaffModel> listRe=this.staff.selectRelationship(stime, etime);
 		
