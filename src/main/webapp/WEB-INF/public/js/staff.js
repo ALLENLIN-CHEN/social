@@ -336,6 +336,7 @@ function setTreeMap(obj){
 	            name: '统计',
 	            type: 'treemap',
 	            visibleMin: 300,
+	            roam: false,
 	            data: data,
 	            leafDepth: 1,
 	            levels: [
@@ -1076,7 +1077,7 @@ function setRelation(obj){
 		        layout: 'none',
 		        focusNodeAdjacency: false,
 		        symbolSize: 80,
-		        roam: true,
+		        roam: false,
 		        label: {
 		            normal: {
 		                show: true
