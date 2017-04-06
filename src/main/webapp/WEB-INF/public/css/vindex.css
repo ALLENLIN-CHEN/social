@@ -197,6 +197,7 @@
 
 .right-content .area-wrap {
 	display: none;
+	margin-bottom: 15px;
 }
 
 /* 用于设置加载动画loading */

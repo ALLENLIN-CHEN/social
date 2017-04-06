@@ -2,7 +2,7 @@ var myChart;
 var timer =null;
 var isInit = true;
 var option;
-var linkOption;
+var linkOption, areaInfo;
 
 //用于保存查询地址
 var areas = ['广东省-阳江市','广东省-珠海市','广东省-广州市','广东省-深圳市','上海市','北京市','安徽省-合肥市','江苏省-南京市','浙江省-杭州市','湖北省-孝感市','湖北省-武汉市'];
@@ -61,6 +61,10 @@ $(function(){
 			$('.time_wrap').hide();
 		}
 		
+		if(!$('.area-wrap').is(':hidden')) {
+			$('.area-wrap').hide();
+		}
+		
 		
 		if(!$(this).data('no-init')) {
 			var url = $(this).data('url');
@@ -79,7 +83,25 @@ $(function(){
 		}else {
 			hideLoading();
 			if($(this).hasClass('type-area')) {
-				$('.area-wrap').show();
+				showLoading();
+				var url = $(this).data('url');
+				$.ajax({
+					type: 'GET',
+					url: url,
+					dataType: 'json',
+					
+					success: function(res) {
+					//	formatOptionConfig(res);
+						hideLoading();
+						areaInfo=res;
+						$('.area-wrap').show();
+					},
+					error: function(err) {
+						alert('获取数据出错，错误为：' + err);
+						hideLoading();
+						
+					}
+				});
 			} else {
 				$('.time_wrap').show();
 			}
@@ -127,7 +149,9 @@ $(function(){
 	});
 	
 	$(document).on('click', '.area-wrap .area-search', function() {
-		
+		var areaname = $('.area').val();
+		areaInfo.area = areaname;
+		formatOptionConfig(areaInfo);
 	});
 		
 
@@ -145,7 +169,7 @@ function hideLoading() {
 function formatOptionConfig(data) {
 	$('.right-content .single').show();
 	$('.right-content .multi').hide();
-	$('.area-wrap').hide();
+//	$('.area-wrap').hide();
 	//初始化用于获得设置echarts的句柄
 	myChart.dispose();
 	myChart = echarts.init(document.getElementById('chartMain'));
@@ -171,6 +195,7 @@ function formatOptionConfig(data) {
 				break;
 				
 			case 'allData':
+				
 				setAllData(data);
 				break;
 			case 'histogram_hos_percent':
@@ -537,7 +562,19 @@ function convertCityName(cityName) {
 	}
 	return cityName2;
 } //转换城市格式
-
+function isCover(arr, r, x, y) {
+	var tempX, tempY;
+	for(var i = 0; i < arr.length; i++) {
+		tempX = arr[i]['x'];
+		tempY = arr[i]['y'];
+		
+		if(Math.sqrt(Math.pow((x-tempX),2) + Math.pow((y-tempY),2)) < r) {
+			return false;
+		}
+	}
+	
+	return true;
+}
 
 function setMap(obj) {
     	//	我把geoCoordMap数组和convertCityName函数扔到了函数外部
@@ -1241,7 +1278,7 @@ function setAllData(obj){
 	var allData = obj.allData;
 	
 	var years=[];
-	var name='北京市';
+	var name=obj.area;
 	var InData=[];
 	var OutData=[];
 	var total=[];
