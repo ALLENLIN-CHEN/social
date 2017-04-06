@@ -149,10 +149,8 @@ function formatOptionConfig(data) {
 				setTreeMap(data);
 				break;
 				
-			case 'histogram_hos':
-				option=setHistogramHosOption(data);
-				myChart.setOption(option);
-				myChart.on('timelinechanged',handleTimeLine);
+			case 'allData':
+				setAllData(data);
 				break;
 			case 'histogram_hos_percent':
 				setHistogramHosPerOption(data);
@@ -1087,5 +1085,153 @@ function setRingChart(obj) {
 	
 	myChart.setOption(option);
 }
+function setAllData(obj){
+	
+	var allData = obj.allData;
+	
+	var years=[];
+	var name='北京市';
+	var InData=[];
+	var OutData=[];
+	var total=[];
+	var percents = [];
+	
+	for(var i =0,j=0;i< allData.length;i++){
+		if(allData[i].name==name){
+			years[j]=allData[i].year+'年';
+			InData[j]=allData[i].otherNum;
+			OutData[j]=allData[i].num;
+			total[j]=allData[i].otherNum + allData[i].num;
+			percents[j]=100*allData[i].percent.toFixed(2);
+			j++;
+		}
+	}
+	
 
+	option = {
+	    backgroundColor: '#0f375f',
+	    tooltip: {
+	        trigger: 'axis',
+	        axisPointer: {
+	            type: 'shadow',
+	            label: {
+	                show: true,
+	                backgroundColor: '#333'
+	            }
+	        }
+	    },
+	    legend: {
+	        data: ['流入', '流出','流入流出率'],
+	        textStyle: {
+	            color: '#ccc'
+	        }
+	    },
+	    xAxis: {
+	        type:'category',
+	        data: years,
+	        axisLine: {
+	            lineStyle: {
+	                color: '#ccc'
+	            }
+	        }
+	    },
+	    yAxis:[ {
+	        type:'value',
+	        name:'人数',
+	        splitLine: {show: false},
+	        axisLine: {
+	            lineStyle: {
+	                color: '#ccc'
+	            }
+	        }
+	    },
+	    {
+	        type: 'value',
+	            name: '流入流出率',
+	            min: 0,
+	            max: 100,
+	            splitLine: {show: false},
+	            position: 'right',
+	            // offset: 80,
+	            axisLine: {
+	                lineStyle: {
+	                    color: '#ccc'
+	                }
+	            },
+	            axisLabel: {
+	                formatter: '{value}%'
+	            }
+	    }],
+	    series: [
+	        {
+	        name: '流入流出率',
+	        type: 'line',
+	        smooth: true,
+	        showAllSymbol: true,
+	        symbol: 'emptyCircle',
+	        symbolSize: 15,
+	        data: percents
+	    },
+	    
+	    {
+	        name: '流出',
+	        type: 'bar',
+	        stack:'总数',
+	        barWidth: 10,
+	        itemStyle: {
+	            normal: {
+	                barBorderRadius: 5,
+	                color: new echarts.graphic.LinearGradient(
+	                    0, 0, 0, 1,
+	                    [
+	                        {offset: 0, color: '#14c8d4'},
+	                        {offset: 1, color: '#43eec6'}
+	                    ]
+	                )
+	            }
+	        },
+	        data: OutData
+	    },
+	   
+	  {
+	        name: '流入',
+	        type: 'bar',
+	        stack:'总数',
+	        barGap: '-100%',
+	        barWidth: 10,
+	        itemStyle: {
+	            normal: {
+	                color: new echarts.graphic.LinearGradient(
+	                    0, 0, 0, 1,
+	                    [
+	                        {offset: 0, color: 'rgba(20,200,212,0.5)'},
+	                        {offset: 0.2, color: 'rgba(20,200,212,0.5)'},
+	                        {offset: 1, color: 'rgba(20,200,212,0.5)'}
+	                    ]
+	                )
+	            }
+	        },
+	        z: -12,
+	        data: InData
+	    },
+	     
+//	    {
+//	        name: '总数',
+//	        type: 'pictorialBar',
+//	        symbol: 'rect',
+//	        itemStyle: {
+//	            normal: {
+//	                color: '#0f375f'
+//	            }
+//	        },
+//	        symbolRepeat: true,
+//	        symbolSize: [12, 4],
+//	        symbolMargin: 1,
+//	        z: -10,
+//	        data: total
+//	    }
+	    ]
+	};
+	myChart.setOption(option);
+}
 

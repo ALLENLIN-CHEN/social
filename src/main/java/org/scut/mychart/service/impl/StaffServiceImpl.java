@@ -1,6 +1,7 @@
 package org.scut.mychart.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,13 @@ import javax.ws.rs.PUT;
 import org.scut.mychart.mapper.StaffMapper;
 import org.scut.mychart.model.StaffModel;
 import org.scut.mychart.service.StaffService;
+import org.springframework.aop.aspectj.AspectJAdviceParameterNameDiscoverer.AmbiguousBindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.stringtemplate.v4.compiler.CodeGenerator.includeExpr_return;
+import org.stringtemplate.v4.compiler.STParser.namedArg_return;
+
+import com.mysql.fabric.xmlrpc.base.Array;
 
 
 @Service
@@ -617,10 +622,24 @@ public class StaffServiceImpl implements StaffService{
 		Map<String,Object> data = new HashMap<String,Object>();
 		
 		List<StaffModel> listIn = this.staff.selectInAll();
-		//List<StaffModel> listOut = this.staff.selectOutAll();
+		List<StaffModel> listOut = this.staff.selectOutAll();
 		
-		data.put("in", listIn);
-		//data.put("out", listOut);
+		for(int i = 0;i<listOut.size();i++){
+			String name=listOut.get(i).getName();
+			String year = listOut.get(i).getYear();
+			for(int j =0;j<listIn.size();j++){
+				if(name.equals(listIn.get(j).getName())&&year.equals(listIn.get(j).getYear())){
+					Integer num = listIn.get(j).getNum();
+					Double per = (double)num/listOut.get(i).getNum();
+					listOut.get(i).setOtherNum(num);
+					listOut.get(i).setPercent(per);
+					listIn.get(j).setIsExist(false);
+				}
+			}
+		}
+		
+		data.put("allData", listOut);
+		data.put("type", "allData");
 		return data;
 	
 	}
@@ -628,7 +647,15 @@ public class StaffServiceImpl implements StaffService{
 	public List<StaffModel> getDeveloped(List<StaffModel> cur){
 		List<StaffModel> res = new ArrayList<StaffModel>();
 		StaffModel tmp = new StaffModel();
+		String[] dev={"广东省-广州市","广东省-深圳市","广东省-珠海市","广东省-佛山市","广东省-江门市","广东省-东莞市","广东省-中山市","广东省-惠州市","广东省-肇庆市","上海市","江苏省-南京市","浙江省-杭州市","安徽省-合肥市","北京市"};
 		
+		for(int i =0;i<cur.size();i++){
+			String name = cur.get(i).getName();
+			if(Arrays.asList(dev).contains(name)){
+				res.add(cur.get(i));
+				
+			}
+		}
 		return res;
 		
 	}
