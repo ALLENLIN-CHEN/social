@@ -1242,8 +1242,7 @@ function setRingChart(obj) {
 			{
 				type: 'pie',
 				center: ['78%','50%'],
-				roseType: 'radius',
-				radius: ['10%', '50%'],
+				radius: ['10%', '48%'],
 				itemStyle:{
 					normal: {
 						label:{
