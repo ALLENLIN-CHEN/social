@@ -2,7 +2,7 @@ var myChart;
 var timer =null;
 var isInit = true;
 var option;
-var linkOption;
+var linkOption, areaInfo;
 
 //用于保存查询地址
 var areas = ['广东省-阳江市','广东省-珠海市','广东省-广州市','广东省-深圳市','上海市','北京市','安徽省-合肥市','江苏省-南京市','浙江省-杭州市','湖北省-孝感市','湖北省-武汉市'];
@@ -61,6 +61,10 @@ $(function(){
 			$('.time_wrap').hide();
 		}
 		
+		if(!$('.area-wrap').is(':hidden')) {
+			$('.area-wrap').hide();
+		}
+		
 		
 		if(!$(this).data('no-init')) {
 			var url = $(this).data('url');
@@ -79,7 +83,25 @@ $(function(){
 		}else {
 			hideLoading();
 			if($(this).hasClass('type-area')) {
-				$('.area-wrap').show();
+				showLoading();
+				var url = $(this).data('url');
+				$.ajax({
+					type: 'GET',
+					url: url,
+					dataType: 'json',
+					
+					success: function(res) {
+					//	formatOptionConfig(res);
+						hideLoading();
+						areaInfo=res;
+						$('.area-wrap').show();
+					},
+					error: function(err) {
+						alert('获取数据出错，错误为：' + err);
+						hideLoading();
+						
+					}
+				});
 			} else {
 				$('.time_wrap').show();
 			}
@@ -127,7 +149,9 @@ $(function(){
 	});
 	
 	$(document).on('click', '.area-wrap .area-search', function() {
-		
+		var areaname = $('.area').val();
+		areaInfo.area = areaname;
+		formatOptionConfig(areaInfo);
 	});
 		
 
@@ -145,7 +169,7 @@ function hideLoading() {
 function formatOptionConfig(data) {
 	$('.right-content .single').show();
 	$('.right-content .multi').hide();
-	$('.area-wrap').hide();
+//	$('.area-wrap').hide();
 	//初始化用于获得设置echarts的句柄
 	myChart.dispose();
 	myChart = echarts.init(document.getElementById('chartMain'));
@@ -168,10 +192,9 @@ function formatOptionConfig(data) {
 				setTreeMap(data);
 				break;
 				
-			case 'histogram_hos':
-				option=setHistogramHosOption(data);
-				myChart.setOption(option);
-				myChart.on('timelinechanged',handleTimeLine);
+			case 'allData':
+				
+				setAllData(data);
 				break;
 			case 'histogram_hos_percent':
 				setHistogramHosPerOption(data);
@@ -544,7 +567,19 @@ function convertCityName(cityName) {
 	}
 	return cityName2;
 } //转换城市格式
-
+function isCover(arr, r, x, y) {
+	var tempX, tempY;
+	for(var i = 0; i < arr.length; i++) {
+		tempX = arr[i]['x'];
+		tempY = arr[i]['y'];
+		
+		if(Math.sqrt(Math.pow((x-tempX),2) + Math.pow((y-tempY),2)) < r) {
+			return false;
+		}
+	}
+	
+	return true;
+}
 
 function setMap(obj) {
     	//	我把geoCoordMap数组和convertCityName函数扔到了函数外部
@@ -1673,6 +1708,153 @@ function setRingChart(obj) {
 		};
 	
 	myChart.setOption(option);
-}
+}*/
+function setAllData(obj){
+	
+	var allData = obj.allData;
+	
+	var years=[];
+	var name=obj.area;
+	var InData=[];
+	var OutData=[];
+	var total=[];
+	var percents = [];
+	
+	for(var i =0,j=0;i< allData.length;i++){
+		if(allData[i].name==name){
+			years[j]=allData[i].year+'年';
+			InData[j]=allData[i].otherNum;
+			OutData[j]=allData[i].num;
+			total[j]=allData[i].otherNum + allData[i].num;
+			percents[j]=100*allData[i].percent.toFixed(2);
+			j++;
+		}
+	}
+	
 
-*/
+	option = {
+	    backgroundColor: '#0f375f',
+	    tooltip: {
+	        trigger: 'axis',
+	        axisPointer: {
+	            type: 'shadow',
+	            label: {
+	                show: true,
+	                backgroundColor: '#333'
+	            }
+	        }
+	    },
+	    legend: {
+	        data: ['流入', '流出','流入流出率'],
+	        textStyle: {
+	            color: '#ccc'
+	        }
+	    },
+	    xAxis: {
+	        type:'category',
+	        data: years,
+	        axisLine: {
+	            lineStyle: {
+	                color: '#ccc'
+	            }
+	        }
+	    },
+	    yAxis:[ {
+	        type:'value',
+	        name:'人数',
+	        splitLine: {show: false},
+	        axisLine: {
+	            lineStyle: {
+	                color: '#ccc'
+	            }
+	        }
+	    },
+	    {
+	        type: 'value',
+	            name: '流入流出率',
+	            min: 0,
+	            max: 100,
+	            splitLine: {show: false},
+	            position: 'right',
+	            // offset: 80,
+	            axisLine: {
+	                lineStyle: {
+	                    color: '#ccc'
+	                }
+	            },
+	            axisLabel: {
+	                formatter: '{value}%'
+	            }
+	    }],
+	    series: [
+	        {
+	        name: '流入流出率',
+	        type: 'line',
+	        smooth: true,
+	        showAllSymbol: true,
+	        symbol: 'emptyCircle',
+	        symbolSize: 15,
+	        data: percents
+	    },
+	    
+	    {
+	        name: '流出',
+	        type: 'bar',
+	        stack:'总数',
+	        barWidth: 10,
+	        itemStyle: {
+	            normal: {
+	                barBorderRadius: 5,
+	                color: new echarts.graphic.LinearGradient(
+	                    0, 0, 0, 1,
+	                    [
+	                        {offset: 0, color: '#14c8d4'},
+	                        {offset: 1, color: '#43eec6'}
+	                    ]
+	                )
+	            }
+	        },
+	        data: OutData
+	    },
+	   
+	  {
+	        name: '流入',
+	        type: 'bar',
+	        stack:'总数',
+	        barGap: '-100%',
+	        barWidth: 10,
+	        itemStyle: {
+	            normal: {
+	                color: new echarts.graphic.LinearGradient(
+	                    0, 0, 0, 1,
+	                    [
+	                        {offset: 0, color: 'rgba(20,200,212,0.5)'},
+	                        {offset: 0.2, color: 'rgba(20,200,212,0.5)'},
+	                        {offset: 1, color: 'rgba(20,200,212,0.5)'}
+	                    ]
+	                )
+	            }
+	        },
+	        z: -12,
+	        data: InData
+	    },
+	     
+//	    {
+//	        name: '总数',
+//	        type: 'pictorialBar',
+//	        symbol: 'rect',
+//	        itemStyle: {
+//	            normal: {
+//	                color: '#0f375f'
+//	            }
+//	        },
+//	        symbolRepeat: true,
+//	        symbolSize: [12, 4],
+//	        symbolMargin: 1,
+//	        z: -10,
+//	        data: total
+//	    }
+	    ]
+	};
+	myChart.setOption(option);
+}
