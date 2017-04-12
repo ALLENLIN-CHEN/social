@@ -31,18 +31,20 @@ public class StaffServiceImpl implements StaffService{
 	 * 实现不同城市的流入人次对比
 	 */
 	@Override
+	/*
 	public Map<String, Object> getInData(String sTime,String eTime){
+
 		Map<String,Object> data = new HashMap<String,Object>();
 		String stime=sTime+"-01-01 00:00:00";
 		String etime=eTime+"-12-31 00:00:00";
-		
+
 		List<StaffModel> list = this.staff.selectIn(stime,etime);
-		
+
 		List<StaffModel> province =new ArrayList<StaffModel>();
 		List<StaffModel> proData =new ArrayList<StaffModel>();
-	   
-	    
-		
+
+
+
 		int sum=0;
 		for(int i=0;i<list.size();i++){
 			if(list.get(i).getName().contains("-")){
@@ -64,11 +66,11 @@ public class StaffServiceImpl implements StaffService{
 //				string=tmp[0];
 //			}
 //			
-			
 
-			sum+=list.get(i).getNum();	
+
+			sum+=list.get(i).getNum();
 		}
-		
+
 		String bef = province.get(0).getName();
 		Integer haha=0;
 		int j=0;
@@ -85,22 +87,22 @@ public class StaffServiceImpl implements StaffService{
 				j++;
 				haha=0;
 				haha+=province.get(i).getOtherNum();
-				bef=cur;	
+				bef=cur;
 			}
 		}
-		
+
 		StaffModel t= new StaffModel();
 		t.setOtherNum(haha);
 		t.setName(bef);
 		proData.add(t);
-		
-		
-		
-		
+
+
+
+
 		for(int i=0;i<list.size();i++){
 			double cur=(double)list.get(i).getNum()/sum;
 			list.get(i).setPercent(cur);
-			
+
 		}
 
 
@@ -108,12 +110,77 @@ public class StaffServiceImpl implements StaffService{
 		data.put("sTime", sTime);
 		data.put("eTime", eTime);
 		data.put("type", "RingChart");
-		
+
 		data.put("province", proData);
 		return data;
 
+		 //2017/4/6 临时需要同步getOutData的，所以原来代码暂时屏蔽
+
 	}
-	
+	 2017/04/07 为了同步getOutData  原来代码暂时屏蔽
+	*/
+	public Map<String, Object> getInData(String sTime, String eTime){
+		Map<String,Object> data = new HashMap<String,Object>();
+		String stime=sTime+"-01-01 00:00:00";
+		String etime=eTime+"-12-31 00:00:00";
+
+		List<StaffModel> list = this.staff.selectIn(stime,etime);
+		List<StaffModel> listRe=this.staff.selectRelationship(stime, etime);
+
+		double sum=0.0;
+		for(int i=0;i<list.size();i++){
+			sum+=list.get(i).getNum();
+		}
+		for(int i=0;i<list.size();i++){
+			double cur=(double)list.get(i).getNum()/sum;
+			list.get(i).setPercent(cur);
+
+		}
+
+
+		Map<String, Object> relaName=new HashMap<String, Object>();
+		Map<String, Object> relaNum=new HashMap<String, Object>();
+		List<String> name=new ArrayList<String>();
+
+		List<Integer> num=new ArrayList<Integer>();
+
+		String bef=listRe.get(0).getName();
+		String cur;
+
+		for(int i=0;i<listRe.size();i++){
+			cur=listRe.get(i).getName();
+			if(cur.equals(bef)){
+				name.add(listRe.get(i).getName2());
+				num.add(listRe.get(i).getNum());
+			}
+			else{
+				relaName.put(bef, name);
+				relaNum.put(bef, num);
+
+				bef=cur;
+				name = new ArrayList<String>();
+				num=new ArrayList<Integer>();
+
+				name.add(listRe.get(i).getName2());
+				num.add(listRe.get(i).getNum());
+
+			}
+
+		}
+		relaName.put(bef, name);
+		relaNum.put(bef, num);
+
+
+		data.put("num",list);
+		data.put("relaName", relaName);
+		data.put("relaNum",relaNum);
+		data.put("sTime", sTime);
+		data.put("eTime", eTime);
+		data.put("type", "RingChart");
+
+		return data;
+
+	}
 	/**
 	 * @return
 	 * 实现不同城市的流出人次对比

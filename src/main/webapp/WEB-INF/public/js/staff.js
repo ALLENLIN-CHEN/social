@@ -186,9 +186,7 @@ function formatOptionConfig(data) {
 				myChart.on('click', handleClick);
 				break;
 			case 'Map':
-
 				setMap(data);
-			  // test(data);
 				break;
 			case 'treeMap':	
 				setTreeMap(data);
@@ -422,6 +420,13 @@ function setTreeMap(obj){
 
 
 var geoCoordMap = {
+	'上海市':[121.4648,31.2891],
+	'广东省':[113.4668,22.8076],
+	'安徽省':[117.2461,32.0361],
+	'北京市':[116.4551,40.2539],
+	'浙江省':[120.498,29.0918],
+	'江苏省':[118.8586,32.915],
+	'湖北省':[112.2363,31.1572],
 	'上海': [121.4648, 31.2891],
 	'东莞': [113.8953, 22.901],
 	'东营': [118.7073, 37.5513],
@@ -998,6 +1003,380 @@ function setMap(obj) {
 	})
 }
 
+function setRingChart(obj) {
+	//	我把geoCoordMap数组和convertCityName函数扔到了函数外部
+
+	/*
+	 var BJData = [
+	 {name:'上海',value:95},
+	 {name:'广州',value:90},
+	 {name:'大连',value:80},
+	 {name:'南宁',value:70},
+	 {name:'南昌',value:60},
+	 {name:'拉萨',value:50},
+	 {name:'长春',value:40},
+	 {name:'包头',value:30},
+	 {name:'重庆',value:20},
+	 {name:'常州',value:10}
+	 ];
+
+	 var ccData = [
+	 {name:'北京',data:BJData},
+	 {name:'上海',data:SHData},
+	 {name:'广州',data:GZData}
+	 ];
+	 */
+	//--------------------下面都是对接的-----------------
+
+
+	var relaName = obj.relaName;
+	var relaNum = obj.relaNum;
+	var list = obj.num;
+	var stime = obj.sTime;
+	var etime = obj.eTime;
+
+
+	function sortInValue(a ,b){
+		return a.value - b.value;
+	}
+
+	/*
+	 var cityNameSet = [
+	 { name: '乌鲁木齐'},
+	 { name: '佛山'},
+	 { name: '保定'},
+	 { name: '兰州'},
+	 { name: '包头'},
+	 { name: '北海'},
+	 { name: '南昌'},
+	 { name: '厦门'}
+	 ]; //用于做流出城市的普通散点
+	 */
+	var cityNameSet = []; //用于做流入城市的普通散点
+	for (var i = 0; i < list.length; i++) {
+		var c = {name: convertCityName(list[i].name)};
+		cityNameSet.push(c);
+	}
+
+	//开始做ccData
+	var ccData = [];
+	for (var i = 0; i < list.length; i++) {
+		var fromCity = list[i].name;
+		var toCityNameList = relaName[fromCity];
+		var toCityValList = relaNum[fromCity];
+		var BJData = [];
+
+		for (var j = 0; j < toCityNameList.length; j++) {
+			//{name:'上海',value:95},
+			var cc = {name: convertCityName(toCityNameList[j]), value: toCityValList[j]};
+			BJData.push(cc);
+		}
+		BJData.sort(sortInValue);
+		//{name:'北京',data:BJData},
+		var ccc = {name: convertCityName(fromCity), data: BJData};
+		ccData.push(ccc);
+
+	}
+
+
+	var planePath = 'path://M1705.06,1318.313v-89.254l-319.9-221.799l0.073-208.063c0.521-84.662-26.629-121.796-63.961-121.491c-37.332-0.305-64.482,36.829-63.961,121.491l0.073,208.063l-319.9,221.799v89.254l330.343-157.288l12.238,241.308l-134.449,92.931l0.531,42.034l175.125-42.917l175.125,42.917l0.531-42.034l-134.449-92.931l12.238-241.308L1705.06,1318.313z';
+
+	var convertData = function (cityData) {
+//cityData是上面ccData的一个数值,格式 “{name:'北京',data:BJData}”
+		var res = [];
+		var data = cityData.data; //data是上面数组之一，比如BJData
+		var fromCity, toCity;
+		toCity = cityData.name;
+		for (var i = 0; i < data.length; i++) {
+			var dataItem = data[i];       //dataItem格式：{name:'福州',value:95}
+			fromCity = dataItem.name;
+			var fromCoord = geoCoordMap[fromCity];
+			var toCoord = geoCoordMap[toCity];
+			//fromCoord和toCoord分别是起点,终点的经纬度
+			if (fromCoord && toCoord) {
+				res.push({
+					fromName: fromCity,
+					toName: toCity,
+					coords: [fromCoord,toCoord],
+					value: dataItem.value
+				});
+			}
+		}
+		return res;
+	};
+
+	function convertData2(cityNameSet) {
+		var ret = [];
+		for (var i = 0; i < cityNameSet.length; i++) {
+			var c = {name: cityNameSet[i].name, value: geoCoordMap[cityNameSet[i].name]};
+			ret.push(c);
+		}
+		return ret;
+	}
+
+	function showCity(cityData) {
+		//cityData是ccData的其中一项，格式： “ {name:'北京',data:BJData} ”
+		var toCity = cityData.name;
+		var toCityData = cityData.data;  //比如BJData
+
+		var data2 = cityData.data;
+
+		var minValue = cityData.data[0].value;
+		var maxValue = cityData.data[cityData.data.length-1].value;
+
+		/*
+		var categoryData = [], barData = []; //柱状图的两个轴
+		for (var i = 0; i < data2.length; i++) {
+			categoryData.push(data2[i].name);
+			barData.push(data2[i].value);
+		}
+		*/
+
+		var series = []; //一开始，series为空
+
+		series.push({ //层0 路线
+				name: toCity + ' Top10',
+				type: 'lines',
+				zlevel: 1,
+				effect: {
+					show: true,
+					period: 4,
+					trailLength: 0.7,
+					symbolSize: 2
+				},
+				lineStyle: {
+					normal: {
+						width: 0,
+						curveness: 0.2
+					}
+				},
+				data: convertData(cityData)
+				/*
+				 res = [
+				 [{coord: fromCoord},{coord: toCoord, value: 人口流出量}],
+				 ......
+				 ......
+				 ];
+				 */
+			},
+
+			{   //层1 路线
+				name: toCity + ' Top10',
+				type: 'lines',
+				zlevel: 2,
+				effect: {  //线上动点的效果，可以显示为飞机
+					show: true,
+					period: 4,
+					trailLength: 0,
+					symbol: planePath,
+					symbolSize: 13
+				},
+
+				tooltip: {
+					formatter: function(params){
+						return params.data.fromName + "--" +params.data.toName+"<br/>"+"人数: "+params.data.value;
+					}
+				},
+
+				lineStyle: {  //线的样式
+					normal: {
+						width: 1,
+						opacity: 0.6,
+						curveness: 0.2
+					}
+				},
+				data: convertData(cityData)
+				/*
+				 convertData输出
+				 res = [
+				 [fromName: 流出城市, toName: 流入城市A, coords: [流出城市坐标, 流入城市A坐标], value: 人数],
+				 ......
+				 [fromName: 流出城市, toName: 流入城市V, coords: [流出城市坐标, 流入城市V坐标], value: 人数],
+				 ];
+				 */
+			},
+
+			{   //层2 带涟漪效果的点(表示流出城市)
+				type: 'effectScatter',
+				coordinateSystem: 'geo',
+				zlevel: 4,
+				rippleEffect: {     //涟漪效果设置
+					brushType: 'stroke',
+					scale: 4
+				},
+				label: {     //涟漪点文本标签
+					normal: {
+						show: true,
+						position: 'right',  //文本标签相对于涟漪点的位置
+						formatter: '{b}'
+					}
+				},
+				tooltip: {
+					formatter: function(parmas){
+						return "起点: "+ parmas.data.name+"<br/>"+"人数: "+parmas.data.value[2];
+					}
+				},
+				symbolSize: function (val) {  //涟漪点大小
+					if(val[2]>100) return 15;
+					return 5 + val[2] / 20;
+				},
+
+				data: toCityData.map(function (dataItem) { // 例如: dataItem是BJData的某项
+					return {
+						name: dataItem.name,
+						value: geoCoordMap[dataItem.name].concat([dataItem.value])
+					};
+				})
+			},
+
+			{  //层3终点
+				name: '终点',
+				type: 'scatter',
+				coordinateSystem: 'geo',
+				zlevel: 2,
+				symbol: 'diamond',
+				label: {
+					normal: {
+						show: true,
+						position: 'right',  //文本标签相对于点的位置
+						formatter: '{b}'
+					}
+				},
+				tooltip: {
+					formatter: function(params){
+						return "重点: " + params.name;
+					}
+				},
+				itemStyle: {
+					normal: {
+						color: 'rgba(100,149,237,1)' //这里暂时起不了作用，颜色被visualmap影响了
+					}
+				},
+				symbolSize: 12,
+				data: [{name: toCity, value: geoCoordMap[toCity]}]
+			},
+
+			{//层4 普通点
+				name: '普通点',
+				type: 'scatter',
+				coordinateSystem: 'geo',
+				symbolSize: 5,
+				zlevel: 3,
+				label: {
+					normal:{
+						show: false
+					}
+				},
+				tooltip: {
+					formatter: function(params){
+						return params.name;
+					}
+				},
+				data: convertData2(cityNameSet)
+			},
+			{
+				type: 'pie',
+				center: ['78%','50%'],
+				radius: ['10%', '48%'],
+				itemStyle:{
+					normal: {
+						label:{
+							show: true,
+							formatter: '{b} : {c} ({d}%)'
+						}
+					},
+					labelLine :{show:true}
+				},
+				tooltip: {
+					trigger: 'item',
+					formatter: "{b}: {c}人 ({d}%)"
+				},
+
+				data: cityData.data
+				/*
+
+				 */
+			}
+
+
+
+		);//series结束
+
+		var option;
+		option = {
+			backgroundColor: '#1b1b1b',
+			title : {
+				text: '各城市流入'+cityData.name+"的人口比例",
+				//subtext: '数据纯属虚构',
+				right: "15%",
+				top: "12%",
+				textStyle : {
+					color: '#fff'
+				}
+			},
+			visualMap: {
+				type: 'continuous',
+				min: minValue,
+				max: maxValue,
+				calculable: true,
+				color: ['#ff3333', 'orange', 'yellow', 'lime', 'aqua'],
+				textStyle: {
+					color: '#fff'
+				}
+			},
+
+			tooltip: {
+
+			},
+			geo: {  //地图数据设置（颜色，位置，大小,中心点等）
+				map: 'china',
+				left: '10',
+				right: '35%',
+				center: [107.98561551896913, 31.205000490896193],
+				zoom: 1.5,
+				label: {
+					emphasis: {
+						show: false
+					}
+				},
+				roam: true,
+				itemStyle: {
+					normal: {
+						areaColor: '#1b1b1b',
+						borderColor: 'rgba(100,149,237,1)',
+						borderWidth: 0.5
+					},
+					emphasis: {
+						areaColor: '#2a333d'
+					}
+				}
+			},
+			series: series
+		}
+		myChart.setOption(option);
+	}//showCity函数结束
+
+	showCity(ccData[2]);
+
+
+	myChart.on('click', function (e) {
+		console.log(e);
+		if (e.componentType != "series") return;
+		if (e.componentSubType != "effectScatter" && e.componentSubType != "scatter") return;
+		//判断是不是设置的点击事件
+
+		var fromCityName = e.name;
+		var id = -1;
+		for (var i = 0; i < ccData.length; i++) {
+			if (ccData[i].name == fromCityName)
+				id = i;
+		}
+		if (id == -1) return; //所选的城市没有数据，退出
+
+		showCity(ccData[id]); //把所选的城市改为被点击的城市
+	})
+}
+
 
 function setRelation(obj){
 	
@@ -1172,6 +1551,8 @@ function setRelation(obj){
 
 	
 }
+
+/*
 function setRingChart(obj) {
 	
 	var num = obj.num;   
@@ -1189,11 +1570,23 @@ function setRingChart(obj) {
 		name:proData[0].name,
 		selected:true,
 	})
+
+	var proMax = -1 ,proMin = 10000000; //用来控制散点图大小的两个变量
 	for(var i =1;i<proData.length;i++){
+		if(proData[i].otherNum > proMax){
+			proMax = proData[i].otherNum;
+		}
+		if(proData[i].otherNum < proMin){
+			proMin = proData[i].otherNum;
+		}
 		province.push({
 			value:proData[i].otherNum,
 			name:proData[i].name
 		})
+	}
+	if(proMin > proMax){
+		proMin = 10;
+		proMax = 11;
 	}
 	//各省的name，value，selected, 饼图中间的部分
 	
@@ -1220,25 +1613,32 @@ function setRingChart(obj) {
 			title: {text: t+"年流入人次情况统计",
 				   x: 'center'
 			},
-			
-	        
-		    tooltip: {
-		        trigger: 'item',
-		        formatter: "{a} <br/>{b}: {c}人 ({d}%)"
-		    },
+			tooltip: {
 
-		    // legend: {
-		    //     orient: 'horizontal',
-		    //     y: 'bottom',
-		    //     data:names
-		    // },
-
-//		    legend: {
-//		        orient: 'vertical',
-//		        x: 'left',
-//		        data:names
-//		    },
-
+			},
+	    	geo: {  //地图数据设置（颜色，位置，大小,中心点等）
+			map: 'china',
+			left: '10',
+			right: '35%',
+			center: [107.98561551896913, 31.205000490896193],
+			zoom: 1.5,
+			label: {
+				emphasis: {
+					show: false
+				}
+			},
+			roam: true,
+			itemStyle: {
+				normal: {
+					areaColor: '#1b1b1b',
+					borderColor: 'rgba(100,149,237,1)',
+					borderWidth: 0.5
+				},
+				emphasis: {
+					areaColor: '#2a333d'
+				}
+			}
+		},
 		    series: [
 		        {
 		            name:'流入人次情况',
@@ -1247,7 +1647,10 @@ function setRingChart(obj) {
 		            center:['25%','50%'],
 		            radius: [0, '40%'],
 		            x:'left',
-
+					tooltip: {
+						trigger: 'item',
+						formatter: "{a} <br/>{b}: {c}人 ({d}%)"
+					},
 		            label: {
 		                normal: {
 		                    position: 'inner'
@@ -1259,7 +1662,7 @@ function setRingChart(obj) {
 		                }
 		            },
 		            data:province
-		        },
+		        },  // 内层的饼状图（省份)
 		        {
 		            name:'流入人次情况',
 		            type:'pie',
@@ -1267,12 +1670,45 @@ function setRingChart(obj) {
 		            radius: ['50%', '70%'],
 
 		            data: citys
-		        }
+		        },  //外层的饼状图
+				{   //层2 带涟漪效果的点(表示流入省份,包括直辖市)
+					type: 'effectScatter',
+					coordinateSystem: 'geo',
+					//zlevel: 4,
+					rippleEffect: {     //涟漪效果设置
+						brushType: 'stroke',
+						scale: 4
+					},
+					label: {     //涟漪点文本标签
+						normal: {
+							show: false,
+							position: 'right',  //文本标签相对于涟漪点的位置
+							formatter: '{b}'
+						}
+					},
+					tooltip: {
+						formatter: function(parmas){
+							return   parmas.data.name+"<br/>"+"人数: "+parmas.data.value[2];
+						}
+					},
+					symbolSize: function (val) {  //涟漪点大小
+						var size2 = 5 + (val[2] - proMin)/(proMax-proMin)*7;
+						if(size2 < 5||size2 > 12) size2 = 2;  //防止异常
+						return size2;
+					},
+
+					data: proData.map(function (dataItem) { // 例如: dataItem是proData某一项
+						return {
+							name: dataItem.name,
+							value: geoCoordMap[dataItem.name].concat([dataItem.otherNum])
+						};
+					})
+				}
 		    ]
 		};
 	
 	myChart.setOption(option);
-}
+}*/
 function setAllData(obj){
 	
 	var allData = obj.allData;
@@ -1422,4 +1858,3 @@ function setAllData(obj){
 	};
 	myChart.setOption(option);
 }
-
