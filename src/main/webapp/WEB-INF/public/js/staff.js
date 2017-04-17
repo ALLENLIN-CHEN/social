@@ -305,6 +305,108 @@ function handleClick(param) {
 			myChart.setOption(linkOption);
 		}
 	}
+	
+
+	else if(param.componentType == "series" && param.seriesType == "treemap"&& param.seriesName == "统计"&& param.treePathInfo.length==2){
+		
+		var data = option.extend.allData;
+		var PerMax=option.extend.Per;
+		var name = param.data.lala;
+		var InMax=0,OutMax=0;
+		var InName,OutName;
+		for (var i =0;i<data.length;i++){
+			if(data[i].name==name){
+				var In=data[i].children[0].children;
+				var Out=data[i].children[1].children;
+				console.log(In);
+				for(var j=0 ;j<In.length;j++){
+					if(In[j].value>=InMax){
+						InMax =In[j].value;
+						InName=In[j].lala;
+					}
+				}
+				for(var j=0;j<Out.length;j++){
+					if(Out[j].value>=OutMax){
+						OutMax =Out[j].value;
+						OutName=Out[j].lala;
+					}
+				}
+			}
+		}
+		console.log(InName);
+		var p={
+				cplace:{
+					show:true,
+					title:name+'流入流出率为:',
+					item:(100*PerMax).toFixed(2)+'%'
+				},
+				cin:{
+					show: true,
+					title:'流入到'+OutName+'最多：',				
+					item:InMax+'人'
+				},
+				cout:{
+					show:true,
+					title:'从'+InName+'流出最多:',
+					item:OutMax+'人'
+				}
+		}
+		setConclusion(p);
+		
+		
+	}
+	else if(param.componentType == "series" && param.seriesType == "treemap"&& param.seriesName == "统计"&& param.treePathInfo.length==1){
+		
+		var p = option.extend.tipInfo;
+		setConclusion(p);
+	}else if(param.componentType == "series" && param.seriesType == "treemap"&& param.seriesName == "统计"&& param.treePathInfo.length==2&&param.selfType=="breadcrumb"){
+		
+		var data = option.extend.allData;
+		var PerMax=option.extend.Per;
+		var name = param.nodeData.name;
+		var InMax=0,OutMax=0;
+		var InName,OutName;
+		for (var i =0;i<data.length;i++){
+			if(data[i].name==name){
+				var In=data[i].children[0].children;
+				var Out=data[i].children[1].children;
+				console.log(In);
+				for(var j=0 ;j<In.length;j++){
+					if(In[j].value>=InMax){
+						InMax =In[j].value;
+						InName=In[j].lala;
+					}
+				}
+				for(var j=0;j<Out.length;j++){
+					if(Out[j].value>=OutMax){
+						OutMax =Out[j].value;
+						OutName=Out[j].lala;
+					}
+				}
+			}
+		}
+		console.log(InName);
+		var p={
+				cplace:{
+					show:true,
+					title:name+'流入流出率为:',
+					item:(100*PerMax).toFixed(2)+'%'
+				},
+				cin:{
+					show: true,
+					title:'流入到'+OutName+'最多：',				
+					item:InMax+'人'
+				},
+				cout:{
+					show:true,
+					title:'从'+InName+'流出最多:',
+					item:OutMax+'人'
+				}
+		}
+		setConclusion(p);
+		
+		
+	}
 }
 
 function setTreeMap(obj){
@@ -322,7 +424,13 @@ function setTreeMap(obj){
     
 	
 	var data=[];
+	var PerMax=0.0;
+	var PerName;
 	for(var i=0;i<listOut.length;i++){
+		if(listOut[i].percent>=PerMax){
+			PerMax=listOut[i].percent;
+			PerName=listOut[i].name;
+		}
 		var children=[];
 		var name = listOut[i].name;
 		var dataOut = listOut[i].num;
@@ -335,7 +443,8 @@ function setTreeMap(obj){
 		for(var j=0;j<relaName.length;j++){
 			cur.push({
 				value:relaNum[j],
-				name:'流入'+relaName[j]+relaNum[j]+'人'
+				name:'流入'+relaName[j]+relaNum[j]+'人',
+				lala:relaName[j]
 				
 			});
 		}
@@ -347,15 +456,19 @@ function setTreeMap(obj){
 		for(var j=0;j<relaName2.length;j++){
 			cur2.push({
 				value:relaNum2[j],
-				name:relaName2[j]+'流出'+relaNum2[j]+'人'
+				name:relaName2[j]+'流出'+relaNum2[j]+'人',
+				lala:relaName2[j]
 				
 			});
 		}
+
+		
 		data.push({
 		
 //		    name:name+'\n'+'流入流出总人次:'+dataOut+dataIn+'\n'+'流入流出人次比:'+(100*per).toFixed(2)+'%',
 			name:name,
 			per: per,
+			lala:name,
 			value:dataOut+dataIn,
 			children:[
 				{
@@ -374,6 +487,25 @@ function setTreeMap(obj){
 	
 	}
 	console.log(data)
+	
+	var tipInfo={
+				cplace:{
+					show:true,
+					title:'全国流入流出率最高城市为:',
+					item:PerName+'：'+(100*PerMax).toFixed(2)+'%'
+				},
+				cin:{
+					show: true,
+					title:'全国流入人数最多城市为：',
+					item:listIn[0].name+'：'+listIn[0].num+'人'
+				},
+				cout:{
+					show:true,
+					title:'全国流出人数最多城市为：',
+					item:listOut[0].name+'：'+listOut[0].num+'人'
+				}
+		}
+	setConclusion(tipInfo);
 
 	var t;
 	if(stime===etime){
@@ -382,7 +514,13 @@ function setTreeMap(obj){
 	else{
 		t=stime+'-'+etime;
 	}
-	    myChart.setOption(option = {
+	    option = {
+	    
+	        extend:{
+	        	allData:data,
+	        	Per:PerMax,
+	        	tipInfo:tipInfo
+	        },
 	        title: {
 	            text: '同一城市流入流出人次统计',
 	            subtext: t+'年',
@@ -442,7 +580,8 @@ function setTreeMap(obj){
 	                }
 	            ]
 	        }]
-	    })
+	    }
+	    myChart.setOption(option);
 
 }
 
@@ -1741,7 +1880,9 @@ function setRingChart(obj) {
 	myChart.setOption(option);
 }*/
 function setAllData(obj){
-	
+	/**
+	 * @param param  param = {cplace: { show: false|true, title: '', item: '' }, cin: { show: false|true, title: '', item: '' }, cout:{ show: false|true, title: '', item: '' }}
+	 */
 	var allData = obj.allData;
 	
 	var years=[];
@@ -1761,7 +1902,42 @@ function setAllData(obj){
 			j++;
 		}
 	}
+	var InMax=0,OutMax=0,PerMax=0.0;
+	var Inyear,Outyear,Peryear;
 	
+	for( var i =0;i<InData.length;i++){
+		if(InData[i]>=InMax){
+			InMax=InData[i];
+			Inyear=years[i];
+			
+		}
+		if(OutData[i]>=OutMax){
+			OutMax=OutData[i];
+			Outyear=years[i];
+		}
+		if(percents[i]>=PerMax){
+			PerMax = percents[i];
+			Peryear=years[i];
+		}
+	}
+	var p={
+			cplace:{
+				show:true,
+				title:'流入流出率最高年份为:'+Peryear,
+				item:'流入流出率：'+PerMax+'%'
+			},
+			cin:{
+				show: true,
+				title:'流入人数最多年份为：'+Inyear,
+				item:'流入人数：'+InMax+'人'
+			},
+			cout:{
+				show:true,
+				title:'流出人数最多年份为：'+Outyear,
+				item:'流出人数：'+OutMax+'人'
+			}
+	}
+	setConclusion(p);
 
 	option = {
 	    backgroundColor: '#0f375f',
