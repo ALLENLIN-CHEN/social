@@ -718,6 +718,7 @@ function setMap(obj) {
 	}
 
 	function showCity(cityData) {
+
 		//cityData是ccData的其中一项，格式： “ {name:'北京',data:BJData} ”
 		var fromCity = cityData.name;
 		var fromCityData = cityData.data;  //比如BJData
@@ -727,13 +728,36 @@ function setMap(obj) {
 		var minValue = cityData.data[0].value;
 		var maxValue = cityData.data[cityData.data.length-1].value;
 		maxValue = (maxValue - minValue)/4+maxValue;
-
+		var maxItem = cityData.data[cityData.data.length-1]
 		var categoryData = [], barData = []; //柱状图的两个轴
+		var sum = 0; //统计流出fromCity的总人数
 		for (var i = 0; i < data2.length; i++) {
 			categoryData.push(data2[i].name);
 			barData.push(data2[i].value);
+			sum = sum + data2[i].value;
 		}
+    	// ---------------开始加入结论框------
 
+
+		var tip ={
+			cplace: {
+				show: true,
+				title: '流出'+fromCity+'总人数:',
+				item: sum+'人'
+			},
+			cin: {
+				show: true,
+				title: "流出"+fromCity+'人口最多的城市:',
+				item: maxItem.name+": "+maxItem.value+"人"
+			},
+			cout:{
+				show:false
+			}
+		};
+		setConclusion(tip);
+
+
+		//------------结束加入结论框---------
 		var series = []; //一开始，series为空
 
 		series.push({ //层0 路线
@@ -919,6 +943,7 @@ function setMap(obj) {
 			},
 			visualMap: {
 				type: 'continuous',
+				value: false,
 				min: minValue,
 				max: maxValue,
 				calculable: true,
@@ -1159,7 +1184,8 @@ function setRingChart(obj) {
 
 		var minValue = cityData.data[0].value;
 		var maxValue = cityData.data[cityData.data.length-1].value;
-
+		maxValue = (maxValue - minValue)/4 + maxValue;
+		var maxItem = cityData.data[cityData.data.length-1];
 		/*
 		var categoryData = [], barData = []; //柱状图的两个轴
 		for (var i = 0; i < data2.length; i++) {
@@ -1167,6 +1193,28 @@ function setRingChart(obj) {
 			barData.push(data2[i].value);
 		}
 		*/
+		var sum = 0;
+		for(var i = 0; i < data2.length; i++){
+			sum = sum + data2[i].value;
+		}
+		var tip ={
+			cplace: {
+				show: true,
+				title: '流入'+toCity+'总人数:',
+				item: sum+'人'
+			},
+			cin: {
+				show: true,
+				title: "流入"+toCity+'人口最多的城市:',
+				item: maxItem.name+": "+maxItem.value+"人"
+			},
+			cout:{
+				show:false
+			}
+		};
+		setConclusion(tip);
+
+
 
 		var series = []; //一开始，series为空
 
@@ -1352,6 +1400,7 @@ function setRingChart(obj) {
 			},
 			visualMap: {
 				type: 'continuous',
+				show: false,
 				min: minValue,
 				max: maxValue,
 				calculable: true,
