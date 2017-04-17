@@ -175,6 +175,78 @@
 .right-content .single {
 	width: 100%;	
 	visibility: hidden;
+	position: relative;
+}
+
+.right-content .conclusion {
+	min-width: 260px;
+	position: absolute;
+    top: 12%;
+    left: 1%;
+    font-size: 20px;
+    line-height: 36px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 137, 123, .8);
+    z-index: 10;
+}
+.right-content .conclusion:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 50%;
+    right: -32px;
+    border-top: 16px solid transparent;
+    border-bottom: 16px solid transparent;
+    border-left: 16px solid rgba(0, 137, 123, .8);
+    border-right: 16px solid transparent;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.right-content .conclusion .title {
+  position: relative;
+  padding-left: 16px;
+  font-weight: bold;
+}
+.right-content .conclusion .item {
+  padding-left: 16px;
+  font-size: 18px;
+  color: #fff;
+}
+.right-content .conclusion .place .title:before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #d50000;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -7px;
+}
+.right-content .conclusion .in .title:before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #6200EA;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -7px;
+}
+.right-content .conclusion .out .title:before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #FF6F00;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -7px;
 }
 
 .right-content .single #chartMain {
