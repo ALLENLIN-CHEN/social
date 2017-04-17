@@ -3,6 +3,7 @@ var timer =null;
 var isInit = true;
 var option;
 var linkOption, areaInfo;
+var conclusion = {$cplace:{}, $cin:{}, $cout:{}};
 
 //用于保存查询地址
 var areas = ['广东省-阳江市','广东省-珠海市','广东省-广州市','广东省-深圳市','上海市','北京市','安徽省-合肥市','江苏省-南京市','浙江省-杭州市','湖北省-孝感市','湖北省-武汉市'];
@@ -16,7 +17,27 @@ function setArea() {
 	$('.area').html(options.join(''));
 }
 
+/**
+ * @param param  param = {cplace: { show: false|true, title: '', item: '' }, cin: { show: false|true, title: '', item: '' }, cout:{ show: false|true, title: '', item: '' }}
+ */
+function setConclusion(param) {
+	var obj;
+	for(var k in param) {
+		obj = param[k];
+		if(!obj.show) {
+			conclusion['$'+k].hide();
+		} else {
+			conclusion['$'+k].show();
+			conclusion['$'+k].find('.title').html(obj.title);
+			conclusion['$'+k].find('.item').html(obj.item);
+		}
+	}
+}
+
 $(function(){
+	conclusion.$cplace = $('.conclusion .place');
+	conclusion.$cin = $('.conclusion .in');
+	conclusion.$cout = $('.conclusion .out');
 	hideLoading();
 	setArea();
 	myChart = echarts.init(document.getElementById('chartMain'));
@@ -190,6 +211,7 @@ function formatOptionConfig(data) {
 				break;
 			case 'treeMap':	
 				setTreeMap(data);
+				myChart.on('click', handleClick);
 				break;
 				
 			case 'allData':
@@ -376,6 +398,8 @@ function setTreeMap(obj){
 	        series: [{
 	            name: '统计',
 	            type: 'treemap',
+	            left: '30%',
+	            width: '70%',
 	            visibleMin: 300,
 	            roam: false,
 	            data: data,
@@ -902,6 +926,9 @@ function setMap(obj) {
 			},
 			tooltip: {
 
+			},
+			toolbox: {
+				show: false
 			},
 			geo: {  //地图数据设置（颜色，位置，大小,中心点等）
 				map: 'china',
@@ -1743,6 +1770,9 @@ function setAllData(obj){
 	                backgroundColor: '#333'
 	            }
 	        }
+	    },
+	    grid: {
+	    	left: '32%'
 	    },
 	    legend: {
 	        data: ['流入', '流出','流入流出率'],
