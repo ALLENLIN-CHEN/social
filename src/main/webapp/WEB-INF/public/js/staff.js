@@ -189,7 +189,7 @@ function formatOptionConfig(data) {
 				setMap(data);
 				break;
 			case 'treeMap':	
-				setTreeMap(data);
+				setTreeMap(data,click);
 				break;
 				
 			case 'allData':
@@ -214,7 +214,9 @@ function formatOptionConfig(data) {
 	}
 }
 
-
+function click(param){
+	comsole.log(param);
+}
 
 
 
@@ -348,6 +350,7 @@ function setTreeMap(obj){
 		
 	
 	}
+	console.log(data)
 
 	var t;
 	if(stime===etime){
@@ -1029,7 +1032,7 @@ function setRingChart(obj) {
 	//--------------------下面都是对接的-----------------
 
 
-	var relaName = obj.relaName;
+	var relaName = obj.relaName; 
 	var relaNum = obj.relaNum;
 	var list = obj.num;
 	var stime = obj.sTime;
@@ -1734,8 +1737,21 @@ function setAllData(obj){
 
 	option = {
 	    backgroundColor: '#0f375f',
+	    title:{
+	    	text:name+'流入流出情况统计',
+	    	x:'center',
+	    	textStyle:{
+	    		color:'red'
+	    	}
+	    		
+	    },
 	    tooltip: {
 	        trigger: 'axis',
+//	        formatter: "{a} <br/>{b}: {c}",
+	        formatter:function(p){
+	        	console.log(p);
+	        	return p[0].name+'<br>'+p[0].seriesName+':'+p[0].data+'%<br>'+p[1].seriesName+':'+p[1].data+'人<br>'+p[2].seriesName+':'+p[2].data+'人<br>'
+	        },
 	        axisPointer: {
 	            type: 'shadow',
 	            label: {
@@ -1745,6 +1761,8 @@ function setAllData(obj){
 	        }
 	    },
 	    legend: {
+	    	
+	        top:25,
 	        data: ['流入', '流出','流入流出率'],
 	        textStyle: {
 	            color: '#ccc'
@@ -1856,5 +1874,6 @@ function setAllData(obj){
 //	    }
 	    ]
 	};
+	console.log(option);
 	myChart.setOption(option);
 }

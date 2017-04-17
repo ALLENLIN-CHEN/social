@@ -6,7 +6,7 @@ import org.codehaus.groovy.runtime.dgmimpl.arrays.IntegerArrayGetAtMetaMethod;
  * @author spiden
  *
  */
-public class StaffModel {
+public class StaffModel implements Comparable<StaffModel> {
 	
 	private String name;
 	private Integer num;
@@ -57,6 +57,15 @@ public class StaffModel {
 	public void setIsExist(boolean ok){
 		isExist=ok;
 		
+	}
+	public int compareTo(StaffModel arg0){
+//		return this.getNum().compareTo(arg0.getNum());
+		if(this.getNum()>arg0.getNum()){
+			return -1;
+		}else if(this.getNum()<arg0.getNum()){
+			return 1;
+		}
+		else return 0;
 	}
 
 
