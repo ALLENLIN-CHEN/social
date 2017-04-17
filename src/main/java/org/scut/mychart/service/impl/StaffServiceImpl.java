@@ -2,6 +2,8 @@ package org.scut.mychart.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,6 +171,8 @@ public class StaffServiceImpl implements StaffService{
 		}
 		relaName.put(bef, name);
 		relaNum.put(bef, num);
+		
+		Collections.sort(list);
 
 
 		data.put("num",list);
@@ -252,6 +256,7 @@ public class StaffServiceImpl implements StaffService{
 		relaName.put(bef, name);
 		relaNum.put(bef, num);
 		
+		Collections.sort(list);
 		
 		data.put("num",list);
 		data.put("relaName", relaName);
@@ -406,6 +411,9 @@ public class StaffServiceImpl implements StaffService{
 				relaNum2.put(c.getName(),num2);
 			}
 		}
+		
+		Collections.sort(listIn);
+		Collections.sort(listOut);
 	
 		data.put("listIn", listIn);
 		data.put("listOut", listOut);
@@ -543,13 +551,6 @@ public class StaffServiceImpl implements StaffService{
 		List<StaffModel> listRe=this.staff.selectRelationship(stime, etime); 
 		List<StaffModel> listReIn=this.staff.selectRelationshipPlus(stime, etime);
 		
-//		StaffModel curhh = new StaffModel();
-//		curhh.setName("hahaha");
-//		curhh.setOtherNum(15);
-//		curhh.setNum(66);
-//		curhh.setPercent(0.0);
-//		listIn.add(curhh);
-//		listReIn.add(curhh);
 		
 		
 		
@@ -677,6 +678,9 @@ public class StaffServiceImpl implements StaffService{
 				relaNum2.put(c.getName(),num2);
 			}
 		}
+		
+		Collections.sort(listIn);
+		Collections.sort(listOut);
 	
 		data.put("listIn", listIn);
 		data.put("listOut", listOut);
