@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.*;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.ws.rs.PUT;
 
@@ -746,4 +746,235 @@ public class StaffServiceImpl implements StaffService{
 		
 	}
 
+
+	@Override
+	public Map<String, Object> getBigScreen(){
+		Map<String,Object> data = new HashMap<String,Object>();
+		String stime = "1991-01-01 00:00:00";
+		String etime = "2999-12-31 00:00:00";
+
+		//-----------开始整理map的数据---------------
+		List<StaffModel> mapData = this.staff.selectRelationship(stime,etime);
+		List<StaffModel> mapOut = new ArrayList<StaffModel>();
+		List<StaffModel> mapIn = new ArrayList<StaffModel>();
+
+		int up = 8; //暂时先设置只显示100个城市，用来测试
+		int cnt;
+		//先排迁出地点，然后排人数（降序)
+		Collections.sort(mapData, new Comparator() {
+			public int compare(Object o1, Object o2){
+				StaffModel s1 = (StaffModel)o1;
+				StaffModel s2 = (StaffModel)o2;
+				if(s1.getName().compareTo(s2.getName())==0){
+					if(s1.getNum() > s2.getNum()){
+						return -1;
+					}
+					return 1;
+				}
+				return s1.getName().compareTo(s2.getName());
+			}
+		});
+
+		String name3 = "hehe";
+		cnt = 0;
+		for(int i = 0; i < mapData.size(); i++){
+			StaffModel s = mapData.get(i);
+			if((s.getName()).equals(name3)){
+				cnt++;
+				if(cnt > up){ continue; } //超出了就不记录
+				mapOut.add(s);
+			}else{
+				cnt = 1;
+				name3 = s.getName();
+				mapOut.add(s);
+			}
+		}
+
+		Collections.sort(mapData, new Comparator() {
+			public int compare(Object o1, Object o2){
+				StaffModel s1 = (StaffModel)o1;
+				StaffModel s2 = (StaffModel)o2;
+				if(s1.getName2().compareTo(s2.getName2())==0){
+					if(s1.getNum() > s2.getNum()){
+						return -1;
+					}
+					return 1;
+				}
+				return s1.getName2().compareTo(s2.getName2());
+			}
+		});
+
+		name3 = "hehe";
+		cnt = 0;
+		for(int i = 0; i < mapData.size(); i++){
+			StaffModel s = mapData.get(i);
+			if((s.getName2()).equals(name3)){
+				cnt++;
+				if(cnt > up){ continue; } //超出了就不记录
+				mapIn.add(s);
+			}else{
+				cnt = 1;
+				name3 = s.getName2();
+				mapIn.add(s);
+			}
+		}
+
+
+		//--------------结束整理map的数据------------------
+
+		//--------开始整理pie的数据----------
+		List<StaffModel> pieOutData = this.staff.selectRelationshipYearOut(); //这个list很大，估计要问问需不需要在全局宣布
+		List<StaffModel> pieInData = this.staff.selectRelationshipYearIn();
+		List<StaffModel> pieOut = new ArrayList<StaffModel>();
+		List<StaffModel> pieIn = new ArrayList<StaffModel>();
+
+		String year3 = "1010";
+		name3 = "hehe"; cnt = 0;
+
+		for(int i = 0; i < pieOutData.size(); i++){
+			StaffModel s = pieOutData.get(i);
+			if(s.getName().equals(name3) && s.getYear().equals(year3)){
+				cnt++;
+				if(cnt <= up){
+					pieOut.add(s);
+				}else if(cnt == up + 1){
+					StaffModel s2 = s.simpleCopy();
+					s2.setName2("其他");
+					pieOut.add(s2);
+				}else{
+					StaffModel s2 = pieOut.get(pieOut.size()-1);
+					s2.setNum(s2.getNum() + s.getNum() );
+				}
+			}else{
+				name3 = s.getName(); year3 = s.getYear();
+				cnt = 1;
+				pieOut.add(s);
+			}
+		}
+
+		year3 = "1010"; name3 = "hehe" ; cnt = 0;
+
+		for(int i = 0 ; i < pieInData.size();i++){
+			StaffModel s = pieInData.get(i);
+			if(s.getName2().equals(name3) && s.getYear().equals(year3)){
+				cnt++;
+				if(cnt <= up){
+					pieIn.add(s);
+				}else if(cnt == up + 1){
+					StaffModel s2 = s.simpleCopy();
+					s2.setName("其他城市");
+					pieIn.add(s2);
+				}else{
+					StaffModel s2 = pieIn.get(pieIn.size() - 1);
+					s2.setNum(s2.getNum() + s.getNum());
+				}
+			}else{
+				name3 = s.getName2(); year3 = s.getYear();
+				cnt = 1;
+				pieIn.add(s);
+			}
+		}
+
+
+		//-----------结束整理pie的数据--------------
+
+		//-----------开始整理bar的数据-------------
+		List<StaffModel> barOutData = this.staff.selectOutAll();
+		List<StaffModel> barInData = this.staff.selectInAll();
+		List<StaffModel> barOut = new ArrayList<StaffModel>();
+		List<StaffModel> barIn = new ArrayList<StaffModel>();
+
+		int up2 = 100;
+		//先按年份升序排，然后按人数降序排
+		Collections.sort(barOutData, new Comparator(){
+			public int compare(Object o1, Object o2){
+				StaffModel s1 = (StaffModel)o1;
+				StaffModel s2 = (StaffModel)o2;
+				int year1 = Integer.valueOf(s1.getYear());
+				int year2 = Integer.valueOf(s2.getYear());
+				if(year1 > year2) return 1;
+				else if(year1 < year2) return -1;
+
+				if(s1.getNum() < s2.getNum()) return 1;
+				return -1;
+			}
+		});
+
+		year3 = "1111";
+		cnt = 0;
+		for(int i = 0; i < barOutData.size(); i++){
+			StaffModel s = barOutData.get(i);
+			if(!s.getYear().equals(year3)){
+				year3 = s.getYear();
+				cnt = 1;
+				barOut.add(s);
+			}else{
+				cnt++;
+				if(cnt <= up2){
+					barOut.add(s);
+				}
+			}
+		}
+
+		Collections.sort(barInData, new Comparator(){
+			public int compare(Object o1, Object o2){
+				StaffModel s1 = (StaffModel)o1;
+				StaffModel s2 = (StaffModel)o2;
+				int year1 = Integer.valueOf(s1.getYear());
+				int year2 = Integer.valueOf(s2.getYear());
+				if(year1 > year2) return 1;
+				else if(year1 < year2) return -1;
+
+				if(s1.getNum() < s2.getNum()) return 1;
+				return -1;
+			}
+		});
+
+		year3 = "1011";
+		cnt = 0;
+		for(int i = 0; i < barInData.size(); i++){
+			StaffModel s = barInData.get(i);
+			if(!s.getYear().equals(year3)){
+				year3 = s.getYear();
+				cnt = 1;
+				barIn.add(s);
+			}else{
+				cnt++;
+				if(cnt <= up2){
+					barIn.add(s);
+				}
+			}
+		}
+
+
+		//-------------------结束整理bar的数据-----------
+        //----------开始收集所有相关城市的名字------------
+		List<String> cityNameSet = new ArrayList<String>();  //注意,这里和之前的前台不太一样，这里是String的list，但是前台不是
+
+		Set<String> ss = new HashSet<String>();
+
+		for(int i = 0; i < barInData.size(); i++){
+			StaffModel s = barInData.get(i);
+			if(!ss.contains(s.getName())){  //如果城市名字没有出现，就加入
+				ss.add(s.getName());
+				cityNameSet.add(s.getName());
+			}
+		}
+
+		for(int i = 0; i < barOutData.size(); i++){
+			StaffModel s = barOutData.get(i);
+			if(!ss.contains(s.getName())){
+				ss.add(s.getName());
+				cityNameSet.add(s.getName());
+			}
+		}
+		data.put("mapOut",mapOut);
+		data.put("mapIn",mapIn);
+		data.put("pieOut",pieOut);
+		data.put("pieIn",pieIn);
+		data.put("barOut",barOut);
+		data.put("barIn",barIn);
+        data.put("cityNameSet",cityNameSet);
+		return data;
+	}
 }

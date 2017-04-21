@@ -75,8 +75,17 @@ public class StaffController {
 		Map<String, Object> map =  staffservice.getAllData();
         return map;
     }
-	
-	
+
+	/*
+	大屏展示数据
+	 */
+
+	@RequestMapping("/staffBigScreen")
+	@ResponseBody
+	public Map<String, Object> getStaffBigScreen (){
+		Map<String, Object> map =  staffservice.getBigScreen();
+		return map;
+	}
 	
 	
 }

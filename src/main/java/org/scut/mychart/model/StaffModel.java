@@ -50,6 +50,11 @@ public class StaffModel implements Comparable<StaffModel> {
 		this.name=name;
 		
 	}
+
+	public void setName2(String name2){
+		this.name2 = name2;
+	}
+
 	public void setPercent(Double percent){
 		this.percent=percent;
 	}
@@ -68,5 +73,13 @@ public class StaffModel implements Comparable<StaffModel> {
 		else return 0;
 	}
 
+	public StaffModel simpleCopy(){ //仅仅复制year，num，name2，name
+		StaffModel s2 = new StaffModel();
+		s2.year = this.year;
+		s2.name = this.name;
+		s2.name2 = this.name2;
+		s2.num = this.num;
+		return s2;
+	}
 
 }

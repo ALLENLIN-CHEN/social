@@ -3,28 +3,35 @@
  */
 var barLineChart,mapChart,pieOutChart,pieInChart,barOutChart,barInChart;
 
-
+var counter = 0;
+var timeId;
 $(function() {
     barLineChart = echarts.init(document.getElementById('barLine'));
-    mapChart = echarts.init(document.getElementById('map-content'));
-    pieOutChart = echarts.init(document.getElementById('pie_out'));
-    pieInChart = echarts.init(document.getElementById('pie_in'));
-    barOutChart = echarts.init(document.getElementById('bar_out'));
-    barInChart = echarts.init(document.getElementById('bar_in'));
-
-
-    init();
-
+   mapChart = echarts.init(document.getElementById('map-content'));
+   pieOutChart = echarts.init(document.getElementById('pie_out'));
+   pieInChart = echarts.init(document.getElementById('pie_in'));
+   barOutChart = echarts.init(document.getElementById('bar_out'));
+   barInChart = echarts.init(document.getElementById('bar_in'));
+    
+    initData();
     mapChart.on('click',function(e){
         console.log(e);
         if(e.componentType!="series") return;
         if(e.componentSubType!="effectScatter"&&e.componentSubType!="scatter") return;
         //判断是不是设置的点击事件
 
-        var fromCityName = e.name;
+
         showMap(e.name);
         showPie(e.name,'out');
         showPie(e.name,'in');
+        showC('out');
+        showC('in');
+        counter = 0;
+        clearInterval(timeId);
+        showConclusion(e.name);
+        timeId = setInterval(function () {
+            showConclusion(e.name)
+        },1500);
         barLineChart.setOption(getCityBarLine(e.name));
     })
 });
@@ -32,30 +39,142 @@ $(function() {
 function initData(){
     $.ajax({
         type: 'GET',
-        url: '',
+        url: 'staff/staffBigScreen',
         dataType: 'json',
 
         success: function(res) {
-            hideLoading();
-
+            $('.loading').hide();
+            makeData(res);
+            barLineChart.setOption(getCityBarLine("广州"));
+            showMap("广州");
+            showPie("广州",'out');
+            showPie("广州",'in');
+            showC('out');
+            showC('in');
+            counter = 0;
+            showConclusion("广州");
+            timeId = setInterval(function () {
+                    showConclusion("广州")
+            },1500);
         },
         error: function(err) {
             alert('获取数据出错，错误为：' + err);
             hideLoading();
-
         }
     });
-
 }
 
-function init(){
-    initData();
-    barLineChart.setOption(getCityBarLine("广州"));
-    showMap("广州");
-    showPie("广州",'out');
-    showPie("广州",'in');
-    showC('out');
-    showC('in');
+function convertCityName(cityName) {
+    var cityName2 = cityName;
+    if (cityName2.indexOf("-") != -1) {
+        var c = cityName2.split("-");
+        cityName2 = c[1];
+    }
+    if (cityName2.indexOf("市") != -1) {
+        var c = cityName2.split("市");
+        cityName2 = c[0];
+    }
+    return cityName2;
+} //转换城市格式
+
+
+var citys = {};
+citys['out'] = [];
+citys['in'] = [];
+var ccData = {};
+var pieData = {};
+var cityNameSet;
+
+function makeData(res){
+    //---------开始接入bar的数据-------------
+    var barOut = res.barOut;
+    var barIn = res.barIn;
+
+    for(var i = 0; i < barOut.length; i++){
+        var ret = {};
+        ret.name = convertCityName(barOut[i].name);
+        ret.value = barOut[i].num;
+        ret.year = barOut[i].year;
+        citys['out'].push(ret);
+    }
+
+    for(var i = 0; i < barIn.length; i++){
+        var ret = {};
+        ret.name = convertCityName(barIn[i].name);
+        ret.value = barIn[i].num;
+        ret.year = barIn[i].year;
+        citys['in'].push(ret);
+    }
+
+    //-------结束接入bar的数据-------------
+
+    cityNameSet = res.cityNameSet; //接入名字的集合
+    for(var i = 0; i < cityNameSet.length; i++){
+        cityNameSet[i] = convertCityName(cityNameSet[i]);
+    }
+
+    //--------开始接入map数据-----------
+    var mapOut = res.mapOut;
+    var mapIn = res.mapIn;
+
+    for(var i = 0; i < mapOut.length;i++) {mapOut[i].name = convertCityName(mapOut[i].name); mapOut[i].name2 = convertCityName(mapOut[i].name2);}
+    for(var i = 0; i < mapIn.length; i++) {mapIn[i].name = convertCityName(mapIn[i].name); mapIn[i].name2 = convertCityName(mapIn[i].name2);}
+
+    for(var i = 0; i < mapOut.length; i++){
+        if(!ccData[mapOut[i].name]){
+            ccData[mapOut[i].name] = {};
+            ccData[mapOut[i].name]['out'] = [];
+            ccData[mapOut[i].name]['in'] = [];
+        }
+        ccData[mapOut[i].name]['out'].push({name: mapOut[i].name2, value: mapOut[i].num });
+    }
+
+    for(var i = 0; i < mapIn.length; i++){
+        if(!ccData[mapIn[i].name2]){
+            ccData[mapIn[i].name2] = {};
+            ccData[mapIn[i].name2]['out'] = [];
+            ccData[mapIn[i].name2]['in'] = [];
+        }
+        ccData[mapIn[i].name2]['in'].push({name: mapIn[i].name, value: mapIn[i].num});
+    }
+
+    //--------------结束接入map数据-----------------
+
+    //------------开始接入pie数据---------------------
+    var pieOut = res.pieOut;
+    var pieIn = res.pieIn;
+
+    for(var i = 0; i < pieOut.length; i++){pieOut[i].name = convertCityName(pieOut[i].name); pieOut[i].name2 = convertCityName(pieOut[i].name2);}
+    for(var i = 0; i < pieIn.length; i++){pieIn[i].name = convertCityName(pieIn[i].name); pieIn[i].name2 = convertCityName(pieIn[i].name2);}
+
+    for(var i = 0; i < pieOut.length; i++){
+        var name = pieOut[i].name, year = pieOut[i].year;
+        if(!pieData[name]){
+            pieData[name] = {};
+            pieData[name]['out'] = {};
+            pieData[name]['in'] = {};
+        }
+        if(!pieData[name]['out'][year]){
+            pieData[name]['out'][year] = [];
+        }
+        pieData[name]['out'][year].push({name: pieOut[i].name2, value: pieOut[i].num});
+    }
+
+    for(var i = 0; i < pieIn.length; i++){
+        var name = pieIn[i].name2, year = pieIn[i].year;
+        if(!pieData[name]){
+            pieData[name] = {};
+            pieData[name]['out'] = {};
+            pieData[name]['in'] = {};
+        }
+        if(!pieData[name]['in'][year]){
+            pieData[name]['in'][year] = [];
+        }
+        pieData[name]['in'][year].push({name: pieIn[i].name, value: pieIn[i].num});
+    }
+    //---------------结束接入pie数据--------------------
+
+
 }
 
 function getCityBarLine(cityName){
@@ -288,8 +407,8 @@ function getCityBarLine(cityName){
     return option;
 }
 
-
 function showMap(cityName){
+    console.log(ccData);
     var inData = ccData[cityName]['in'];
     var outData = ccData[cityName]['out'];
 
@@ -327,7 +446,7 @@ function showMap(cityName){
     function convertData2(cityNameSet){
         var ret = [];
         for(var i = 0; i < cityNameSet.length; i++){
-            var c = {name: cityNameSet[i].name, value: geoCoordMap(cityNameSet[i].name)};
+            var c = {name: cityNameSet[i], value: geoCoordMap(cityNameSet[i])};
             ret.push(c);
         }
         return ret;
@@ -401,13 +520,18 @@ function showMap(cityName){
                     formatter: '{b}'
                 }
             },
+            itemStyle: {
+                normal: {
+                    color: '#a6c84c'
+                }
+            },
             tooltip: {
                 formatter: function(parmas){
                     return "终点: "+ parmas.data.name+"<br/>"+"人数: "+parmas.data.value[2];
                 }
             },
             symbolSize: function (val) {  //涟漪点大小
-                if(val[2]>100) return 15;
+                if(val[2]>100) return 10;
                 return 5 +　val[2] / 20;
             },
             data: outData.map(function (dataItem) { // 例如: dataItem是BJData的某项
@@ -433,13 +557,20 @@ function showMap(cityName){
                     formatter: '{b}'
                 }
             },
+            itemStyle: {
+              normal: {
+                  color: '#a6c84c',
+              }
+            },
+            /*
             tooltip: {
                 formatter: function(parmas){
                     return "终点: "+ parmas.data.name+"<br/>"+"人数: "+parmas.data.value[2];
                 }
             },
+            */
             symbolSize: function (val) {  //涟漪点大小
-                if(val[2]>100) return 15;
+                if(val[2]>100) return 10;
                 return 5 +　val[2] / 20;
             },
             data: inData.map(function (dataItem) { // 例如: dataItem是BJData的某项
@@ -462,14 +593,17 @@ function showMap(cityName){
                     formatter: '{b}'
                 }
             },
+            /*
             tooltip: {
                 formatter: function(params){
                     return "起点: " + params.name;
                 }
             },
+            */
             itemStyle: {
                 normal: {
-                    color: 'rgba(100,149,237,1)' //这里暂时起不了作用，颜色被visualmap影响了
+                    color: '#ffa022',
+
                 }
             },
             symbolSize: 12,
@@ -480,7 +614,7 @@ function showMap(cityName){
             type: 'scatter',
             coordinateSystem: 'geo',
             symbolSize: 5,
-            zlevel: 3,
+            zlevel: 0,
             label: {
                 normal:{
                     show: false
@@ -532,57 +666,101 @@ function showMap(cityName){
 
 function showPie(cityName,s){
     var series = []; //一开始，series为空  
-    var data = ccData[cityName][s];
-    var up = 9;
-    var data2 = [];
-    for(var i = 0; i < data.length; i++){
-        if(i >= up) break;
-        var ret = { name: data[i].name, value: data[i].value};
-        data2.push(ret);
-    }
-    if(data.length > up){
-        var v = 0;
-        for(var i = up; i < data.length;i++){
-            v = v + data[i].value;
-        }
-        data2.push({name:'其他城市',value: v});
-    }
+    var data = pieData[cityName][s];
+
     var cc;
     if(s == "out") cc = "流出";
     else cc = "流入";
-    series.push({
-        type: 'pie',
-        center: ['52%','60%'],
-        radius: ['20%', '65%'],
-        label: {
-            normal: {
-                formatter: "{b}: {c}人 ({d}%)"
-            }
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{b}: {c}人 ({d}%)"
-        },
-        data: data2
-    });//series结束
+
+    //-----先确定时间轴--------
+    var timeLineData = [];
+    for(var i = 1990; i < 3000; i++){
+        var i2 = ""+ i;
+        if(pieData[cityName][s][i2]){  //这个年份有数据
+            timeLineData.push(i2);
+        }
+    }
+    //------------结束确定时间轴--------------
 
     var option;
     option = {
-        title : {
-            text: cityName+"近年来"+cc+"人口最多的城市和所占比例",
-            x: "left",
-            y: "top",
-            textStyle:{
-                color: '#fff',
-                fontSize : 19,
-                fontWeight: 'bold'
+        baseOption: {
+            timeline: {
+                show: false,
+                left: "0px",
+                orient: 'vertical',
+                axisType: 'category',
+                tooltip:{
+                   show: false
+                },
+                autoPlay:true,
+                currentIndex: 0,
+                playInterval: 1500,
+                lineStyle:{
+                    normal: {
+                        color: "white"
+                    }
+                },
+                controlStyle:{
+                    normal:{
+                        color: "white"
+                    }
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        interval: 'auto',
+                        formatter:'{value}年',
+                        textStyle: {
+                            color: "white"
+                        }
+                    },
+                },
+                data:[]
+            },
+            color:['#c23531', 'rgba(255,144,128,1)','rgba(0,191,183,1)','#61a0a8', '#d48265', '#91c7ae','#749f83',  '#ca8622', '#bda29a','#6e7074'],
+            title: {
+
+            },
+            series: {
+                type: 'pie'
             }
         },
-        label:{},
-        series: series,
-        tooltip: {},
+        options: []
+    };
+    for(var i = 0; i < timeLineData.length; i++){
+        option.baseOption.timeline.data.push(timeLineData[i]);
+        option.options.push({
+            title : {
+                text: timeLineData[i]+"年"+cityName+cc+"人口最多的城市和所占比例",
+                x: "left",
+                y: "top",
+                textStyle:{
+                    color: '#fff',
+                    fontSize : 19,
+                    fontWeight: 'bold'
+                }
+            },
 
+
+            series:[{
+                type: 'pie',
+                center: ['48%','55%'],
+                radius: ['20%', '65%'],
+                label: {
+                    normal: {
+                        formatter: "{b}: {c}人 ({d}%)"
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b}: {c}人 ({d}%)"
+                },
+                data: data[timeLineData[i]]
+            }]
+        })
     }
+
     if(s == 'out')
         pieOutChart.setOption(option);
     else
@@ -749,6 +927,80 @@ function showC(s){
     // 使用刚指定的配置项和数据显示图表。
     if(s == 'in') barInChart.setOption(option);
     else barOutChart.setOption(option);
+}
+
+function showConclusion(cityName){
+
+    //先确定全国流入流出的最大年和最小年
+    var minBarInYear = 1*citys['in'][0].year;
+    var minBarOutYear = 1*citys['out'][0].year;
+    var maxBarInYear = 1*citys['in'][citys['in'].length - 1].year;
+    var maxBarOutYear = 1*citys['out'][citys['out'].length - 1].year;
+
+    //确定cityName这个城市流入流出的最大年和最小年
+    var minPieOutYear = 10000;
+    var minPieInYear = 10000;
+    var maxPieOutYear = 10;
+    var maxPieInYear = 10;
+
+    for(var i = 1990; i <= 3000; i++){
+        var i2 = i + "";
+        if(pieData[cityName]['out'][i2]){
+            if(i > maxPieOutYear){
+                maxPieOutYear = i;
+            }
+            if( i < minPieOutYear){
+                minPieOutYear = i;
+            }
+        }
+
+        if(pieData[cityName]['in'][i2]){
+            if(i > maxPieInYear){
+                maxPieInYear = i;
+            }
+            if(i < minPieInYear){
+                minPieInYear = i;
+            }
+        }
+    }
+
+    var PieOutYear = minPieOutYear + counter%(maxPieOutYear - minPieOutYear + 1);
+    var PieInYear = minPieInYear + counter%(maxPieInYear - minPieInYear + 1);
+    var BarOutYear = minBarOutYear + counter%(maxBarOutYear - minBarOutYear + 1);
+    var BarInYear = minBarInYear + counter%(maxBarInYear - minBarInYear + 1);
+
+    var BarIn,BarOut;
+
+    for(var i = 0; i < citys['out'].length; i++){
+        if(1*citys['out'][i].year == BarOutYear){
+            BarOut = citys['out'][i];
+            break;
+        }
+    }
+
+    for(var i = 0; i < citys['in'].length; i++){
+        if(1*citys['in'][i].year == BarInYear){
+            BarIn = citys['in'][i];
+            break;
+        }
+    }
+
+    var PieOutCity, PieOutValue, PieInCity, PieInValue;
+
+    PieOutCity =  pieData[cityName]['out'][""+PieOutYear][0].name;
+    PieOutValue = pieData[cityName]['out'][""+PieOutYear][0].value;
+    PieInCity =   pieData[cityName]['in'][""+PieInYear][0].name;
+    PieInValue =  pieData[cityName]['in'][""+PieInYear][0].value;
+
+    var a1 = document.getElementById("allIn");
+    a1.innerHTML = BarInYear + "年全国流入人口数量最多的城市: "+ BarIn.name + ": "+ BarIn.value + "人";
+    var a2 = document.getElementById("allOut");
+    a2.innerHTML = BarOutYear + "年全国流入人口数量最多的城市: "+ BarOut.name + ": "+ BarOut.value + "人";
+    var a3 = document.getElementById("cityIn");
+    a3.innerHTML = PieInYear +　"年流入" + cityName + "人口最多的城市: " + PieInCity + "(" + PieInValue + "人)";
+    var a4 = document.getElementById("cityOut");
+    a4.innerHTML = PieOutYear + "年流出" + cityName + "人口最多的城市: " + PieOutCity + "(" + PieOutValue+ "人)";
+    counter++;
 }
 
 

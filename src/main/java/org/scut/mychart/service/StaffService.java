@@ -46,6 +46,8 @@ public interface StaffService {
 	public List<StaffModel> getDeveloped(List<StaffModel> cur);
 	
 	
-	
-
+	/*
+	  大屏展示的取数据部分
+	 */
+	public Map<String, Object> getBigScreen();
 }

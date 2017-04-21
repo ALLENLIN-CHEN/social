@@ -51,4 +51,9 @@ public interface StaffMapper {
 	public List<StaffModel> selectRelationship(String stime,String etime);
 	public List<StaffModel> selectRelationshipPlus(String stime,String etime);
 
+	/*
+	关于大屏展示的饼图
+	 */
+	public List<StaffModel> selectRelationshipYearOut();
+	public List<StaffModel> selectRelationshipYearIn();
 }

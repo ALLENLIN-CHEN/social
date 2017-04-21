@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1920">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/ryldBigscreen.css">
     <script type = "text/javascript" src="js/jquery.min.js"></script>
     <script type = "text/javascript" src="js/fake_data.js"></script>
@@ -14,6 +15,11 @@
 
 </head>
 <body>
+    <div class="loading">
+         <img class="icon" alt="loading" src="images/loading.gif">
+    </div>
+
+
     <div class="wrap-theme">
         <div class="theme-content">全国各城市人口迁移分析</div>
     </div>
@@ -31,6 +37,13 @@
     <div class = "barCityOut wrap" id = "bar_out"></div>
 
     <div class = "barCityIn wrap" id = "bar_in"></div>
+
+    <div class = "conclusion" id = "conclusion">
+        <div ><i class="glyphicon glyphicon-bookmark"></i><span  id = "allIn"></span></div>
+        <div><i class="glyphicon glyphicon-bookmark"></i><span  id = "allOut"></span></div>
+        <div ><i class="glyphicon glyphicon-bookmark"></i><span  id = "cityIn"></span></div>
+        <div><i class="glyphicon glyphicon-bookmark"></i><span  id = "cityOut"></span></div>
+    </div>
 
 </body>
 </html>

@@ -2,7 +2,7 @@
  * Created by scut on 2017/4/16.
  */
 //用于存放伪造的数据
-
+    /*
 var citys = {
     'out':[
         { name: "阳江", year: 2012 , value: 171},
@@ -189,4 +189,5 @@ var ccData = {
     '广州': { 'out':GZData, 'in':GZData}
 }
 
+*/
 //上面这几个数组用于具体城市的图

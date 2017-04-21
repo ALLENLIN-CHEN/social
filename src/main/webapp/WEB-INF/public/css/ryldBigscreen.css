@@ -39,6 +39,25 @@ body {
     background: none;
 }
 
+.loading {
+    position: fixed;
+    width: 101%;
+    height: 101%;
+    background: #0f2a42;
+    z-index: 2222;
+}
+
+.loading .icon {
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -75px;
+    margin-left: -75px;
+}
+
+
 .wrap-theme {
     position: absolute;
     left: 35%;
@@ -127,4 +146,17 @@ body {
 #barCityOut{
     width: 580px;
     height: 270px;
+}
+
+#conclusion{
+    position: absolute;
+    top: 7%;
+    right: 60px;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    line-height: 36px;
+}
+
+div#conclusion div span {
+    padding-left: 10px;
 }

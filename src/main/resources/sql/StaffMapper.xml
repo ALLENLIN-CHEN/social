@@ -76,8 +76,26 @@
 		    group by year,name
 		    order by year,name
     	]]>
-    </select> 
-    
+    </select>
+
+    <select id ="selectRelationshipYearOut" resultType="org.scut.mychart.model.StaffModel" useCache="true">
+        <![CDATA[
+		    select original_work_place as name, year(turn_out_date) as year, current_work_place as name2, count(*) as num
+            from ryld2
+            group by name, year, name2
+            order by name, year, num desc;
+    	]]>
+    </select>
+
+    <select id ="selectRelationshipYearIn" resultType="org.scut.mychart.model.StaffModel" useCache="true">
+        <![CDATA[
+		    select original_work_place as name, year(turn_in_date) as year, current_work_place as name2, count(*) as num
+            from ryld2
+            group by name, year, name2
+            order by name2, year, num desc;
+    	]]>
+    </select>
+
 </mapper>
     
     
