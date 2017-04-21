@@ -31,7 +31,7 @@ $(function() {
         showConclusion(e.name);
         timeId = setInterval(function () {
             showConclusion(e.name)
-        },1500);
+        },3000);
         barLineChart.setOption(getCityBarLine(e.name));
     })
 });
@@ -56,7 +56,7 @@ function initData(){
             showConclusion("广州");
             timeId = setInterval(function () {
                     showConclusion("广州")
-            },1500);
+            },3000);
         },
         error: function(err) {
             alert('获取数据出错，错误为：' + err);
@@ -696,7 +696,7 @@ function showPie(cityName,s){
                 },
                 autoPlay:true,
                 currentIndex: 0,
-                playInterval: 1500,
+                playInterval: 3000,
                 lineStyle:{
                     normal: {
                         color: "white"
@@ -804,7 +804,7 @@ function showC(s){
                 symbolSize: 9,
                 autoPlay:true,
                 currentIndex: 0,
-                playInterval: 1500,
+                playInterval: 3000,
                 lineStyle:{
                     color: "white"
                 },
