@@ -44,7 +44,6 @@ function initData(){
 
         success: function(res) {
             $('.loading').hide();
-            //fsfasdfasdfsdfasdf
             makeData(res);
             barLineChart.setOption(getCityBarLine("广州"));
             showMap("广州");
@@ -261,9 +260,9 @@ function getCityBarLine(cityName){
             x: '85%',
             top: '0%',
             textStyle: {
-                color: '#90979c',
+                color: '#fff',
             },
-            "data": ['流入', '流出']
+            "data": ['流入', '流出','总数']
         },
 
 
@@ -286,7 +285,6 @@ function getCityBarLine(cityName){
             },
             "axisLabel": {
                 "interval": 0,
-
             },
             "data": x_data,
         }],
@@ -298,14 +296,15 @@ function getCityBarLine(cityName){
             "axisLine": {
                 lineStyle: {
                     color: '#90979c'
-                }
+                },
+                show: false
             },
             "axisTick": {
                 "show": false
             },
             "axisLabel": {
                 "interval": 0,
-
+                show:false
             },
             "splitArea": {
                 "show": false
