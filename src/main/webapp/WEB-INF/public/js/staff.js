@@ -943,7 +943,7 @@ function setMap(obj) {
 			},
 			visualMap: {
 				type: 'continuous',
-				value: false,
+				show: false,
 				min: minValue,
 				max: maxValue,
 				calculable: true,

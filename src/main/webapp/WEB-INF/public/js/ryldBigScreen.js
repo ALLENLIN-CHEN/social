@@ -533,7 +533,7 @@ function showMap(cityName){
             },
             symbolSize: function (val) {  //涟漪点大小
                 if(val[2]>100) return 10;
-                return 5 +　val[2] / 20;
+                return 5 + val[2] / 20;
             },
             data: outData.map(function (dataItem) { // 例如: dataItem是BJData的某项
                 return {
@@ -572,7 +572,7 @@ function showMap(cityName){
             */
             symbolSize: function (val) {  //涟漪点大小
                 if(val[2]>100) return 10;
-                return 5 +　val[2] / 20;
+                return 5 + val[2] / 20;
             },
             data: inData.map(function (dataItem) { // 例如: dataItem是BJData的某项
                 return {
@@ -998,9 +998,11 @@ function showConclusion(cityName){
     var a2 = document.getElementById("allOut");
     a2.innerHTML = BarOutYear + "年全国流入人口数量最多的城市: "+ BarOut.name + ": "+ BarOut.value + "人";
     var a3 = document.getElementById("cityIn");
-    a3.innerHTML = PieInYear +　"年流入" + cityName + "人口最多的城市: " + PieInCity + "(" + PieInValue + "人)";
+    a3.innerHTML = PieInYear + "年流入" + cityName + "人口最多的城市: " + PieInCity + "(" + PieInValue + "人)";
     var a4 = document.getElementById("cityOut");
     a4.innerHTML = PieOutYear + "年流出" + cityName + "人口最多的城市: " + PieOutCity + "(" + PieOutValue+ "人)";
+    //设置标题年份
+    $('.theme-year').html(PieOutYear);
     counter++;
 }
 
