@@ -1871,7 +1871,7 @@ function setAllData(obj){
 //	        formatter: "{a} <br/>{b}: {c}",
 	        formatter:function(p){
 	        	console.log(p);
-	        	return p[0].name+'<br>'+p[0].seriesName+':'+p[0].data+'%<br>'+p[1].seriesName+':'+p[1].data+'人<br>'+p[2].seriesName+':'+p[2].data+'人<br>'
+	        	return p[0].name+'<br>'+p[0].seriesName+':'+p[0].data.toFixed(2)+'%<br>'+p[1].seriesName+':'+p[1].data+'人<br>'+p[2].seriesName+':'+p[2].data+'人<br>'
 	        },
 	        axisPointer: {
 	            type: 'shadow',
@@ -1966,7 +1966,7 @@ function setAllData(obj){
 	        label: {
 	        	normal: {
 	        		show: true,
-	            	position: 'inside',
+	            	position: 'insideTop',
 	            	formatter: function(v) {
 	            		return v.data + '人';
 	            	},
