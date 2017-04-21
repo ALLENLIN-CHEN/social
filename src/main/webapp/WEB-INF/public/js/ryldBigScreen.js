@@ -250,7 +250,9 @@ function getCityBarLine(cityName){
         },
         grid: {
             "borderWidth": 0,
-            "top": 40,
+            "top": 50,
+            "right": 70,
+            "left": 50,
             "bottom": 45,
             textStyle: {
                 color: "#fff"
