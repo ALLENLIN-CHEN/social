@@ -182,7 +182,7 @@
 	min-width: 260px;
 	position: absolute;
     top: 12%;
-    left: 1%;
+    left: 4px;
     font-size: 20px;
     line-height: 36px;
     padding: 20px;
@@ -327,4 +327,10 @@
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
+}
+
+@media screen and (max-width: 996px) {
+	.right-content .conclusion {
+		transform: scale(.8) translateX(-10%);
+	}
 }

@@ -1839,7 +1839,7 @@ function setAllData(obj){
 			cplace:{
 				show:true,
 				title:'流入流出率最高年份为:'+Peryear,
-				item:'流入流出率：'+PerMax+'%'
+				item:'流入流出率：'+PerMax.toFixed(2)+'%'
 			},
 			cin:{
 				show: true,
@@ -1860,7 +1860,8 @@ function setAllData(obj){
 	    	text:name+'流入流出情况统计',
 	    	x:'center',
 	    	textStyle:{
-	    		color:'red'
+	    		color:'#fff',
+	    		fontWeight: 'bold'
 	    	}
 	    		
 	    },
@@ -1903,10 +1904,16 @@ function setAllData(obj){
 	        type:'value',
 	        name:'人数',
 	        splitLine: {show: false},
+	        axisLabel: {
+	        	inside: true
+	        },
 	        axisLine: {
 	            lineStyle: {
 	                color: '#ccc'
 	            }
+	        },
+	        axisTick: {
+	        	inside: true
 	        }
 	    },
 	    {
@@ -1930,6 +1937,18 @@ function setAllData(obj){
 	        {
 	        name: '流入流出率',
 	        type: 'line',
+	        label: {
+	        	normal: {
+	        		show: true,
+	        		formatter: function(v) {
+	        			return v.data.toFixed(2) + '%';
+	        		},
+	        		textStyle: {
+	        			color: '#fff',
+	        			fontWeight: 'bold'
+	        		}
+	        	}
+	        },
 	        smooth: true,
 	        showAllSymbol: true,
 	        symbol: 'emptyCircle',
@@ -1941,7 +1960,20 @@ function setAllData(obj){
 	        name: '流出',
 	        type: 'bar',
 	        stack:'总数',
-	        barWidth: 10,
+	        barWidth: 42,
+	        label: {
+	        	normal: {
+	        		show: true,
+	            	position: 'inside',
+	            	formatter: function(v) {
+	            		return v.data + '人';
+	            	},
+	            	textStyle: {
+	        			color: '#fff',
+	        			fontWeight: 'bold'
+	        		}
+	        	}
+	        },
 	        itemStyle: {
 	            normal: {
 	                barBorderRadius: 5,
@@ -1962,7 +1994,20 @@ function setAllData(obj){
 	        type: 'bar',
 	        stack:'总数',
 	        barGap: '-100%',
-	        barWidth: 10,
+	        barWidth: 42,
+	        label: {
+	        	normal: {
+	        		show: true,
+	            	position: 'inside',
+	            	formatter: function(v) {
+	            		return v.data + '人';
+	            	},
+	            	textStyle: {
+	        			color: '#fff',
+	        			fontWeight: 'bold'
+	        		}
+	        	}
+	        },
 	        itemStyle: {
 	            normal: {
 	                color: new echarts.graphic.LinearGradient(
