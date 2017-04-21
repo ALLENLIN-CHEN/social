@@ -44,6 +44,7 @@ function initData(){
 
         success: function(res) {
             $('.loading').hide();
+            //fsfasdfasdfsdfasdf
             makeData(res);
             barLineChart.setOption(getCityBarLine("广州"));
             showMap("广州");
