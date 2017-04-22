@@ -109,6 +109,7 @@
 /* 	border-left: none; */
 /* } */
 
+
 .right-content {
 	width: 100%;
 	min-height: 100px;
@@ -293,4 +294,12 @@
     transform: scaleY(1.0);
     -webkit-transform: scaleY(1.0);
   }
+}
+
+.navbar-inverse .navbar-nav > li > a {
+	color: #fff;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover {
+	color: #F0AD4E;
 }
