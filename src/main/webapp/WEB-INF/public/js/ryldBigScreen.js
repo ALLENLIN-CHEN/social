@@ -639,8 +639,8 @@ function showMap(cityName){
             map: 'china',
             left: '10',
             right: '35%',
-            center: [84.98561551896913, 29.205000490896193],
-            zoom: 0.7,
+            center: [90.98561551896913, 34.205000490896193],
+            zoom: 1.2,
             label: {
                 emphasis: {
                     show: false

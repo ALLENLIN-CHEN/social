@@ -15,8 +15,8 @@
 }
 
 body {
-    width: 1920px;
-    height: 1080px;
+    width: 100%;
+    height: 100%;
     background: url('../images/background2.png') 0% 0% / 100%;
     /*     transform: scale(0.991146); */
     /*     transform-origin: left top 0px; */
@@ -28,8 +28,8 @@ body {
 }
 
 .wrap {
-    width: 580px;
-    height: 270px;
+    width: 30%;
+    height: 30%;
     border-style: solid;
     border-width: 16px 17px;
     border-image-source: url('../images/border.png');
@@ -90,63 +90,42 @@ body {
 }
 
 #map-content {
-    width: 2000px;
-    height: 1200px;
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    width: 60%;
+    height: 90%;
 }
 
-.barLine{
+#barLine{
     position: absolute;
     top: 5%;
     left: 12px;
 }
 
-#barLine{
-    width: 580px;
-    height: 270px;
-}
-
-.pieCityOut{
+#pie_out{
     position:absolute;
     top: 36%;
     left: 12px;
 }
 
-#pie_out{
-    width: 580px;
-    height: 270px;
-}
 
-.pieCityIn{
+#pie_in{
     position: absolute;
     top: 67%;
     left: 12px;
 }
 
-#pie_in{
-    width: 580px;
-    height: 270px;
-}
-
-.barCityOut{
+#bar_out{
     position: absolute;
     top: 36%;
     right: 12px;
 }
 
-#barCityOut{
-    width: 580px;
-    height: 270px;
-}
-
-.barCityIn{
+#bar_in{
     position: absolute;
     top: 67%;
     right: 12px;
-}
-
-#barCityOut{
-    width: 580px;
-    height: 270px;
 }
 
 #conclusion{
