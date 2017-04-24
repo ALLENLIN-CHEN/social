@@ -307,7 +307,7 @@ function handleClick(param) {
 	}
 	
 
-	else if(param.componentType == "series" && param.seriesType == "treemap"&& param.seriesName == "统计"&& param.treePathInfo.length==2){
+	else if(!param.selfType&&param.componentType == "series" && param.seriesType == "treemap"&& param.seriesName == "统计"&& param.treePathInfo.length==2){
 		
 		var data = option.extend.allData;
 		var PerMax=option.extend.Per;
@@ -337,18 +337,18 @@ function handleClick(param) {
 		var p={
 				cplace:{
 					show:true,
-					title:name+'流入流出率为:',
+					title: "<span style='color: #c62828'>" + name +'</span>流入流出率为:',
 					item:(100*PerMax).toFixed(2)+'%'
 				},
 				cin:{
 					show: true,
-					title:'流入到'+OutName+'最多：',				
-					item:InMax+'人'
+					title:'从'+ "<span style='color: #c62828'>" + name+'</span>流出最多：',				
+					item: "<span style='color: #c62828; font-weight:bold;'>" + OutName + "</span>：" + InMax+'人'
 				},
 				cout:{
 					show:true,
-					title:'从'+InName+'流出最多:',
-					item:OutMax+'人'
+					title:'流入到'+ "<span style='color: #c62828'>" + name +'</span>最多:',
+					item: "<span style='color: #c62828; font-weight:bold;'>" + InName + "</span>：" + OutMax +'人'
 				}
 		}
 		setConclusion(p);
@@ -389,18 +389,18 @@ function handleClick(param) {
 		var p={
 				cplace:{
 					show:true,
-					title:name+'流入流出率为:',
+					title: "<span style='color: #c62828'>" + name +'</span>流入流出率为:',
 					item:(100*PerMax).toFixed(2)+'%'
 				},
 				cin:{
 					show: true,
-					title:'流入到'+OutName+'最多：',				
-					item:InMax+'人'
+					title:'从'+ "<span style='color: #c62828'>" + name+'</span>流出最多：',				
+					item: "<span style='color: #c62828; font-weight:bold;'>" + OutName + "</span>：" + InMax+'人'
 				},
 				cout:{
 					show:true,
-					title:'从'+InName+'流出最多:',
-					item:OutMax+'人'
+					title:'流入到'+ "<span style='color: #c62828'>" + name +'</span>最多:',
+					item: "<span style='color: #c62828; font-weight:bold;'>" + InName + "</span>：" + OutMax +'人'
 				}
 		}
 		setConclusion(p);
@@ -492,17 +492,17 @@ function setTreeMap(obj){
 				cplace:{
 					show:true,
 					title:'全国流入流出率最高城市为:',
-					item:PerName+'：'+(100*PerMax).toFixed(2)+'%'
+					item:"<span style='color: #c62828; font-weight:bold;'>"+PerName+'</span>：'+(100*PerMax).toFixed(2)+'%'
 				},
 				cin:{
 					show: true,
 					title:'全国流入人数最多城市为：',
-					item:listIn[0].name+'：'+listIn[0].num+'人'
+					item:"<span style='color: #c62828; font-weight:bold;'>" + listIn[0].name+'</span>：'+listIn[0].num+'人'
 				},
 				cout:{
 					show:true,
 					title:'全国流出人数最多城市为：',
-					item:listOut[0].name+'：'+listOut[0].num+'人'
+					item:"<span style='color: #c62828; font-weight:bold;'>"+ listOut[0].name+'</span>：'+listOut[0].num+'人'
 				}
 		}
 	setConclusion(tipInfo);
@@ -1817,6 +1817,7 @@ function setAllData(obj){
 			j++;
 		}
 	}
+	
 	var InMax=0,OutMax=0,PerMax=0.0;
 	var Inyear,Outyear,Peryear;
 	
@@ -1870,7 +1871,7 @@ function setAllData(obj){
 //	        formatter: "{a} <br/>{b}: {c}",
 	        formatter:function(p){
 	        	console.log(p);
-	        	return p[0].name+'<br>'+p[0].seriesName+':'+p[0].data+'%<br>'+p[1].seriesName+':'+p[1].data+'人<br>'+p[2].seriesName+':'+p[2].data+'人<br>'
+	        	return p[0].name+'<br>'+p[0].seriesName+':'+p[0].data.toFixed(2)+'%<br>'+p[1].seriesName+':'+p[1].data+'人<br>'+p[2].seriesName+':'+p[2].data+'人<br>'
 	        },
 	        axisPointer: {
 	            type: 'shadow',
@@ -1920,7 +1921,7 @@ function setAllData(obj){
 	        type: 'value',
 	            name: '流入流出率',
 	            min: 0,
-	            max: 100,
+	            max: PerMax+20,
 	            splitLine: {show: false},
 	            position: 'right',
 	            // offset: 80,
@@ -1953,7 +1954,8 @@ function setAllData(obj){
 	        showAllSymbol: true,
 	        symbol: 'emptyCircle',
 	        symbolSize: 15,
-	        data: percents
+	        data: percents,
+	        yAxisIndex:1
 	    },
 	    
 	    {
@@ -1964,7 +1966,7 @@ function setAllData(obj){
 	        label: {
 	        	normal: {
 	        		show: true,
-	            	position: 'inside',
+	            	position: 'insideTop',
 	            	formatter: function(v) {
 	            		return v.data + '人';
 	            	},
